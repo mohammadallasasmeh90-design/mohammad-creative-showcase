@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import GamePage from "./pages/GamePage";
 import MediaPage from "./pages/MediaPage";
+import StoryPage from "./pages/StoryPage";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/play/:slug" component={GamePage} />
       <Route path="/watch/:slug" component={MediaPage} />
+      <Route path="/story" component={StoryPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

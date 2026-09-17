@@ -135,13 +135,13 @@ const resources = [
   { kind: "صورة", title: "نسخة من تمرين 1", url: "https://drive.google.com/file/d/1vU-YND9f7fDDzEju1TVnZ98v-5VVVWAz/view", path: "/watch/exercise-one", icon: Clapperboard },
   { kind: "صورة", title: "نسخة من تمرين 2", url: "https://drive.google.com/file/d/1oJKhwo-HJHG0zDjuniHERAdsNxfvTEgo/view", path: "/watch/exercise-two", icon: Clapperboard },
   { kind: "كتاب", title: "غلاف الكتاب", url: "https://drive.google.com/file/d/1BnN4sshv2A0eyPg1rcZtM5UNLl9oEKPh/view", icon: BookOpen },
-  { kind: "قصة", title: "قصة للأطفال — تمرين 3", url: "https://drive.google.com/file/d/1dhp1SY8sqiHSylyHmi6HSYwzpw95gwgp/view", icon: BookOpen },
+  { kind: "قصة", title: "قصة للأطفال — قراءة مباشرة", url: "https://drive.google.com/file/d/1dhp1SY8sqiHSylyHmi6HSYwzpw95gwgp/view", path: "/story", icon: BookOpen },
   { kind: "عرض", title: "خريطة الجسم الإنساني", url: "https://docs.google.com/presentation/d/1edPVrnvVxjsuH4JOiGEyqHgkZji2lwq2/edit", icon: Atom },
   { kind: "صوت", title: "برودكاست شب وبنت", url: "https://drive.google.com/file/d/1w9CYMBF92p_188H29rg0fhIt3TAFWVdd/view", path: "/watch/podcast", icon: Film },
   { kind: "صوت", title: "صوت المطر على ألواح الحديد", url: "https://drive.google.com/file/d/1LdqUbU8qDK4IDWJTWohVWlaHxktnmybg/view", path: "/watch/rain", icon: Film },
   { kind: "صوت", title: "تحويل النص إلى صوت بالمشاعر", url: "https://drive.google.com/file/d/1t2GARmHEGRGwDyRugXC_IZQwAie-FVdL/view", path: "/watch/emotional-tts", icon: Film },
   { kind: "صوت", title: "صوت فيديو الجوجل فيبز", url: "https://drive.google.com/file/d/1DMGNKVfQ-OQIpfsd1ODYDHX0vVF0jEvh/view", icon: Film },
-  { kind: "ملف", title: "موقع إلكتروني — حزمة ZIP", url: "https://drive.google.com/file/d/1iu2s_ErfYMn5DifTSxjh9pQxhIIdU9mX/view", icon: Code2 },
+  { kind: "موقع", title: "موقع إلكتروني — تشغيل مباشر", url: "https://drive.google.com/file/d/1iu2s_ErfYMn5DifTSxjh9pQxhIIdU9mX/view", path: "/embedded-site/index.html", icon: Code2 },
 ];
 
 function BrandMark() {
@@ -271,7 +271,7 @@ function Home() {
 
       <section className="resources-section" id="resources">
         <div className="container">
-          <div className="section-heading resources-heading"><div><SectionKicker>الأرشيف الكامل</SectionKicker><h2>كل الروابط،<br /><em>في مكان واحد.</em></h2></div><div className="section-heading__side"><p>كل الألعاب والوسائط تعمل من داخل الموقع مباشرة، مع الاحتفاظ برابط المصدر الأصلي لمن يريد الرجوع إليه.</p><span className="project-count">28 <small>روابط مباشرة</small></span></div></div>
+          <div className="section-heading resources-heading"><div><SectionKicker>الأرشيف الكامل</SectionKicker><h2>كل الروابط،<br /><em>في مكان واحد.</em></h2></div><div className="section-heading__side"><p>كل الألعاب والوسائط والقصة والموقع تعمل من داخل الموقع مباشرة، مع الاحتفاظ برابط المصدر الأصلي لمن يريد الرجوع إليه.</p><span className="project-count">30 <small>روابط مباشرة</small></span></div></div>
           <div className="resource-grid">{resources.map((resource) => { const Icon = resource.icon; const href = resource.path ?? resource.url; return <a className={`resource-item ${resource.path ? "resource-item--playable" : ""}`} key={resource.url + resource.title} href={href} target={resource.path ? undefined : "_blank"} rel={resource.path ? undefined : "noreferrer"}><span className="resource-icon"><Icon size={18} /></span><span className="resource-copy"><small>{resource.path ? "تشغيل داخل الموقع" : resource.kind}</small><strong>{resource.title}</strong></span>{resource.path ? <Play className="resource-arrow" size={16} fill="currentColor" /> : <ExternalLink className="resource-arrow" size={16} />}</a>; })}</div>
           <a className="drive-folder-link" href="https://drive.google.com/drive/folders/1lsOL5MViy3kMO7fUdm2M9hlZjMFAmn8i" target="_blank" rel="noreferrer"><ExternalLink size={15} /> فتح مجلد Drive الكامل</a>
         </div>
