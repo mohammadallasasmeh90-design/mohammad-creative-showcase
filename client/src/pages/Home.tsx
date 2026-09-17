@@ -33,6 +33,8 @@ type Project = {
   accent: string;
   image?: string;
   video?: string;
+  sourceUrl: string;
+  sourceLabel: string;
   icon: typeof Atom;
 };
 
@@ -46,6 +48,8 @@ const projects: Project[] = [
     accent: "coral",
     image: "/manus-storage/smart-cabinet_d7433183.png",
     video: "/manus-storage/smart-cabinet_fb4e38f1.mp4",
+    sourceUrl: "https://drive.google.com/file/d/1huhd6D01jccDNvBuX1NOMLvqAL5GguE5/view",
+    sourceLabel: "فتح فيديو الخزانة الذكية في Drive",
     icon: Zap,
   },
   {
@@ -56,6 +60,8 @@ const projects: Project[] = [
     label: "تجربة علمية",
     accent: "blue",
     video: "/manus-storage/physics-explainer_12d8104e.mp4",
+    sourceUrl: "https://drive.google.com/file/d/1tAnG7hz9K5VS-jTslHK2S6FA9kIl-q8o/view",
+    sourceLabel: "فتح تجربة الجاذبية التفاعلية",
     icon: Atom,
   },
   {
@@ -66,6 +72,8 @@ const projects: Project[] = [
     label: "فيديو تعليمي",
     accent: "gold",
     video: "/manus-storage/bee-lifecycle_b5a655bd.mp4",
+    sourceUrl: "https://drive.google.com/file/d/1aJsvgePBQN-DgC7yZ6iD4yw_TQWYqKbN/view",
+    sourceLabel: "فتح فيديو دورة حياة النحلة",
     icon: Film,
   },
   {
@@ -76,6 +84,8 @@ const projects: Project[] = [
     label: "لعبة تفاعلية",
     accent: "violet",
     image: "/manus-storage/explainer-character_a5fee8aa.jpg",
+    sourceUrl: "https://drive.google.com/file/d/1aiBSigTjF8OC-y9ho_WC66oEo4k8as78/view",
+    sourceLabel: "تشغيل لعبة الذكاء",
     icon: Brain,
   },
   {
@@ -86,6 +96,8 @@ const projects: Project[] = [
     label: "تمرين إبداعي",
     accent: "lime",
     image: "/manus-storage/exercise-one_b66de397.jpg",
+    sourceUrl: "https://drive.google.com/file/d/1vU-YND9f7fDDzEju1TVnZ98v-5VVVWAz/view",
+    sourceLabel: "فتح الصورة الأصلية",
     icon: Clapperboard,
   },
   {
@@ -96,11 +108,40 @@ const projects: Project[] = [
     label: "تجربة صوتية",
     accent: "pink",
     image: "/manus-storage/exercise-two_e014028f.jpg",
+    sourceUrl: "https://drive.google.com/file/d/1oJKhwo-HJHG0zDjuniHERAdsNxfvTEgo/view",
+    sourceLabel: "فتح الصورة الأصلية",
     icon: BookOpen,
   },
 ];
 
 const filters: ProjectCategory[] = ["الكل", "تجارب", "ألعاب", "مرئيات", "صوت"];
+
+const resources = [
+  { kind: "لعبة", title: "نسخة من ملف اللعبة", url: "https://drive.google.com/file/d/1Jyjhiu0YIVp3a66NFbSS2Nbd6ppsSI-z/view", icon: Gamepad2 },
+  { kind: "لعبة", title: "لعبة الذكاء / الواجب", url: "https://drive.google.com/file/d/1aiBSigTjF8OC-y9ho_WC66oEo4k8as78/view", icon: Brain },
+  { kind: "لعبة", title: "Game — نسخة تفاعلية", url: "https://drive.google.com/file/d/1S7PAvxbvQvCLYZ6Gy-rtMFSNnh5z2IIl/view", icon: Gamepad2 },
+  { kind: "تجربة", title: "تجربة علمية تفاعلية لطلاب دورة النجارة", url: "https://drive.google.com/file/d/1jjxS9t4hLx0gGpnz2y3y9MLVA8PmySH6/view", icon: FlaskConical },
+  { kind: "تجربة", title: "تجربة تفاعلية عن الجاذبية", url: "https://drive.google.com/file/d/1tAnG7hz9K5VS-jTslHK2S6FA9kIl-q8o/view", icon: Atom },
+  { kind: "فيديو", title: "فيديو الخزانة الذكية", url: "https://drive.google.com/file/d/1huhd6D01jccDNvBuX1NOMLvqAL5GguE5/view", icon: Film },
+  { kind: "فيديو", title: "إنشاء فيديو لشرح الفيزياء", url: "https://drive.google.com/file/d/1KsN0sQHlO6vtmm-X4mhPrdWw39xpMQdP/view", icon: Film },
+  { kind: "فيديو", title: "فيديو التنين", url: "https://drive.google.com/file/d/1XaGF4xKDggOKCNuh4GgsADUgy3W1hIkP/view", icon: Film },
+  { kind: "فيديو", title: "فيديو عطر", url: "https://drive.google.com/file/d/1i3XwU_KUAtxdpqgth1xK3hZyB9km7Ejy/view", icon: Film },
+  { kind: "فيديو", title: "جمع أكثر من فيديو مع بعض", url: "https://drive.google.com/file/d/1enjZJpPuceWCh01ya9zy5pF6alls8mk9/view", icon: Clapperboard },
+  { kind: "فيديو", title: "أجراس الزهر", url: "https://drive.google.com/file/d/1u74708P7NEgt8vjTXpf1RWhWZWEqnFNA/view", icon: Film },
+  { kind: "فيديو", title: "دورة حياة النحلة بالعربية", url: "https://drive.google.com/file/d/1aJsvgePBQN-DgC7yZ6iD4yw_TQWYqKbN/view", icon: Film },
+  { kind: "صورة", title: "إعلان الخزانة الذكية", url: "https://drive.google.com/file/d/1zfkz8lB3XLGsvOs96BsUi8OnjwU4rTz2/view", icon: Clapperboard },
+  { kind: "صورة", title: "شخصية الشرح", url: "https://drive.google.com/file/d/1x38qOFp51pL0r9UL-Pqz4B1vzuVCcNjv/view", icon: Sparkles },
+  { kind: "صورة", title: "نسخة من تمرين 1", url: "https://drive.google.com/file/d/1vU-YND9f7fDDzEju1TVnZ98v-5VVVWAz/view", icon: Clapperboard },
+  { kind: "صورة", title: "نسخة من تمرين 2", url: "https://drive.google.com/file/d/1oJKhwo-HJHG0zDjuniHERAdsNxfvTEgo/view", icon: Clapperboard },
+  { kind: "كتاب", title: "غلاف الكتاب", url: "https://drive.google.com/file/d/1BnN4sshv2A0eyPg1rcZtM5UNLl9oEKPh/view", icon: BookOpen },
+  { kind: "قصة", title: "قصة للأطفال — تمرين 3", url: "https://drive.google.com/file/d/1dhp1SY8sqiHSylyHmi6HSYwzpw95gwgp/view", icon: BookOpen },
+  { kind: "عرض", title: "خريطة الجسم الإنساني", url: "https://docs.google.com/presentation/d/1edPVrnvVxjsuH4JOiGEyqHgkZji2lwq2/edit", icon: Atom },
+  { kind: "صوت", title: "برودكاست شب وبنت", url: "https://drive.google.com/file/d/1w9CYMBF92p_188H29rg0fhIt3TAFWVdd/view", icon: Film },
+  { kind: "صوت", title: "صوت المطر على ألواح الحديد", url: "https://drive.google.com/file/d/1LdqUbU8qDK4IDWJTWohVWlaHxktnmybg/view", icon: Film },
+  { kind: "صوت", title: "تحويل النص إلى صوت بالمشاعر", url: "https://drive.google.com/file/d/1t2GARmHEGRGwDyRugXC_IZQwAie-FVdL/view", icon: Film },
+  { kind: "صوت", title: "صوت فيديو الجوجل فيبز", url: "https://drive.google.com/file/d/1DMGNKVfQ-OQIpfsd1ODYDHX0vVF0jEvh/view", icon: Film },
+  { kind: "ملف", title: "موقع إلكتروني — حزمة ZIP", url: "https://drive.google.com/file/d/1iu2s_ErfYMn5DifTSxjh9pQxhIIdU9mX/view", icon: Code2 },
+];
 
 function BrandMark() {
   return (
@@ -220,10 +261,18 @@ function Home() {
                   <button className="project-card__play" aria-label={`عرض ${project.title}`}><Play size={16} fill="currentColor" /></button>
                   <span className="project-card__type"><Icon size={14} />{project.label}</span>
                 </div>
-                <div className="project-card__body"><h3>{project.title}</h3><p>{project.description}</p><span className="project-card__more">استكشف المشروع <ArrowLeft size={15} /></span></div>
+                <div className="project-card__body"><h3>{project.title}</h3><p>{project.description}</p><span className="project-card__more">استكشف المشروع <ArrowLeft size={15} /></span><a className="project-card__source" href={project.sourceUrl} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}><ExternalLink size={13} /> {project.sourceLabel}</a></div>
               </article>;
             })}
           </div>
+        </div>
+      </section>
+
+      <section className="resources-section" id="resources">
+        <div className="container">
+          <div className="section-heading resources-heading"><div><SectionKicker>الأرشيف الكامل</SectionKicker><h2>كل الروابط،<br /><em>في مكان واحد.</em></h2></div><div className="section-heading__side"><p>لم نحذف أي رابط من الملفات الأصلية. افتح اللعبة، شاهد الفيديو، أو استعرض الصورة من مصدرها مباشرة.</p><span className="project-count">24 <small>روابط مباشرة</small></span></div></div>
+          <div className="resource-grid">{resources.map((resource) => { const Icon = resource.icon; return <a className="resource-item" key={resource.url + resource.title} href={resource.url} target="_blank" rel="noreferrer"><span className="resource-icon"><Icon size={18} /></span><span className="resource-copy"><small>{resource.kind}</small><strong>{resource.title}</strong></span><ExternalLink className="resource-arrow" size={16} /></a>; })}</div>
+          <a className="drive-folder-link" href="https://drive.google.com/drive/folders/1lsOL5MViy3kMO7fUdm2M9hlZjMFAmn8i" target="_blank" rel="noreferrer"><ExternalLink size={15} /> فتح مجلد Drive الكامل</a>
         </div>
       </section>
 
@@ -261,7 +310,7 @@ function Home() {
         <div className="project-modal" onClick={(event) => event.stopPropagation()}>
           <button className="modal-close" onClick={() => setSelectedProject(null)} aria-label="إغلاق"><X size={20} /></button>
           <div className="project-modal__media">{selectedProject.video ? <video src={selectedProject.video} controls autoPlay playsInline poster={selectedProject.image} /> : <img src={selectedProject.image} alt={selectedProject.title} />}</div>
-          <div className="project-modal__copy"><SectionKicker>{selectedProject.label}</SectionKicker><h2>{selectedProject.title}</h2><p>{selectedProject.description}</p><span className="modal-note"><Code2 size={15} /> فكرة مصممة لتُفهم بالتجربة</span></div>
+          <div className="project-modal__copy"><SectionKicker>{selectedProject.label}</SectionKicker><h2>{selectedProject.title}</h2><p>{selectedProject.description}</p><span className="modal-note"><Code2 size={15} /> فكرة مصممة لتُفهم بالتجربة</span><a className="modal-source" href={selectedProject.sourceUrl} target="_blank" rel="noreferrer"><ExternalLink size={15} /> {selectedProject.sourceLabel}</a></div>
         </div>
       </div>}
     </main>
