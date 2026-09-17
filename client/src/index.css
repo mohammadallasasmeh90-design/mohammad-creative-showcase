@@ -132,3 +132,6 @@ button:not(:disabled), a[href] { cursor: pointer; }
 @media (max-width: 680px) { .experience-row { margin-top: 8px; }.experience-list { display: block; }.experience-list > div { text-align: right; } }
 
 .profile-cv { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; color: #172b38; background: #efbd86; border-radius: 999px; padding: 10px 14px; font-size: 10px; font-weight: 700; text-decoration: none; transition: transform .2s, background .2s; }.profile-cv:hover { color: #172b38; background: #f7cea4; transform: translateY(-2px); }
+
+.contact-footer__links { display: inline-flex; align-items: center; gap: 20px; }.contact-footer__links a { display: inline-flex; align-items: center; gap: 6px; }.contact-footer__links a:first-child { color: #efbd86; }.contact-footer__links a:first-child:hover { color: #fff; }
+@media (max-width: 680px) { .contact-footer__links { width: 100%; justify-content: space-between; } }

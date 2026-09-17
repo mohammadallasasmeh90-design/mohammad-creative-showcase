@@ -13,6 +13,7 @@ import {
   Film,
   FlaskConical,
   Gamepad2,
+  Github,
   GraduationCap,
   Mail,
   MapPin,
@@ -317,7 +318,7 @@ function Home() {
           <SectionKicker light>هل لديك سؤال جديد؟</SectionKicker>
           <h2>لنصنع له<br /><em>تجربة تستحق.</em></h2>
           <button className="button button--light" onClick={() => window.alert("شكرًا! هذه المساحة جاهزة لفكرة التعاون القادمة.")}>افتح مساحة للحوار <ArrowLeft size={18} /></button>
-          <div className="contact-footer"><BrandMark /><span>مختبر الإبداع الرقمي · 2026</span><a href="#home">العودة للأعلى ↑</a></div>
+          <div className="contact-footer"><BrandMark /><span>مختبر الإبداع الرقمي · 2026</span><div className="contact-footer__links"><a href="https://github.com/mohammadallasasmeh90-design/mohammad-creative-showcase" target="_blank" rel="noreferrer"><Github size={14} /> GitHub</a><a href="#home">العودة للأعلى ↑</a></div></div>
         </div>
       </section>
 
