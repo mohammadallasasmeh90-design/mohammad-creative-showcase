@@ -13,8 +13,12 @@ import {
   Film,
   FlaskConical,
   Gamepad2,
+  GraduationCap,
+  Mail,
+  MapPin,
   Lightbulb,
   Menu,
+  Phone,
   Play,
   Sparkles,
   Trophy,
@@ -188,6 +192,7 @@ function Home() {
             <button onClick={() => scrollTo("work")}>المشاريع</button>
             <button onClick={() => scrollTo("method")}>المنهجية</button>
             <button onClick={() => scrollTo("about")}>عن المختبر</button>
+            <button onClick={() => scrollTo("profile")}>ملفي</button>
           </nav>
           <button className="topbar__cta" onClick={() => scrollTo("contact")}>لنتعاون <ArrowUpLeft size={15} /></button>
         </div>
@@ -199,9 +204,9 @@ function Home() {
         <div className="hero-orbit hero-orbit--two" />
         <div className="hero-content container">
           <div className="hero-copy">
-            <SectionKicker light>ملف أعمال 2026 · عمّان</SectionKicker>
-            <h1>حين يصبح <em>التعلّم</em><br />تجربة تُحكى.</h1>
-            <p className="hero-lede">مساحة رقمية تجمع الفضول، التصميم، والتقنية في مشاريع تنبض بالحياة — من لعبة ذكية إلى تجربة علمية لا تُنسى.</p>
+            <SectionKicker light>محمد عبدالله العسعسمة · الأردن</SectionKicker>
+            <h1>خبرة تُبنى.<br /><em>وأفكار تتحرك.</em></h1>
+            <p className="hero-lede">مهندس اتصالات ومشرف ميداني يحوّل الخبرة التقنية إلى تجارب تعليمية ومشاريع رقمية نابضة بالحياة — من الألياف الضوئية إلى الألعاب التفاعلية.</p>
             <div className="hero-actions">
               <button className="button button--primary" onClick={() => scrollTo("work")}>اكتشف المشاريع <ArrowLeft size={18} /></button>
               <button className="text-link text-link--light" onClick={() => scrollTo("method")}>كيف نصنع الأثر؟ <span>↙</span></button>
@@ -210,7 +215,7 @@ function Home() {
               <div className="avatar-stack" aria-hidden="true">
                 <span>م</span><span>✦</span><span>ت</span>
               </div>
-              <p><strong>6 مسارات إبداعية</strong><br /><span>وكلها تبدأ بسؤال جيد</span></p>
+              <p><strong>مهندس اتصالات · مبتكر رقمي</strong><br /><span>من الكرك إلى مساحة أوسع</span></p>
             </div>
           </div>
           <div className="hero-visual" aria-label="واجهة الخزانة الذكية">
@@ -239,6 +244,15 @@ function Home() {
             <p>لأن أفضل المحتوى لا يكتفي بأن يُفهم؛ بل يجعل صاحبه يرغب في أن يجرّب، يشارك، ويعود إليه مرة أخرى.</p>
           </div>
           <div className="statement-note"><span>لماذا؟</span><strong>لأن الفضول<br />أقوى من الحفظ.</strong></div>
+        </div>
+      </section>
+
+      <section className="profile-section" id="profile">
+        <div className="container profile-grid">
+          <div className="profile-portrait-wrap"><div className="profile-orbit" /><img className="profile-portrait" src="/manus-storage/mohammad-portrait_1f220f22.png" alt="محمد عبدالله العسعسمة" /><span className="profile-badge">متاح للتعاون</span></div>
+          <div className="profile-copy"><SectionKicker>من يقف خلف التجربة</SectionKicker><h2>محمد عبدالله<br /><em>العسعسمة.</em></h2><p className="profile-lead">مهندس كهرباء واتصالات أردني، بخبرة عملية في الألياف الضوئية، شبكات FTTH، صيانة الهواتف، وأنظمة CCTV — وبشغف واضح لصناعة محتوى وتجارب رقمية تجعل المعرفة أقرب وأكثر إنسانية.</p><div className="profile-contact"><a href="tel:+962790141918"><Phone size={15} /> +962 790 141 918</a><a href="mailto:Allasasmah.mohammad@yahoo.com"><Mail size={15} /> Allasasmah.mohammad@yahoo.com</a><span><MapPin size={15} /> الكرك، الأردن</span></div><div className="profile-meta"><span>أردني</span><span>العربية · English</span><span>تدريب صيانة أجهزة خلوية · 2024</span></div><a className="profile-cv" href="/manus-storage/profile_078c6478.pdf" target="_blank" rel="noreferrer"><ExternalLink size={14} /> عرض السيرة الذاتية الكاملة</a></div>
+          <div className="profile-facts"><div className="profile-fact"><GraduationCap size={20} /><div><small>التخصص</small><strong>هندسة كهرباء واتصالات</strong><span>جامعة مؤتة · 2009–2015</span></div></div><div className="profile-fact"><Zap size={20} /><div><small>الخبرة</small><strong>ألياف ضوئية · FTTH · شبكات</strong><span>إشراف ميداني وتواصل مع العملاء</span></div></div><div className="profile-fact"><Sparkles size={20} /><div><small>نقاط القوة</small><strong>تواصل · تفاوض · قيادة فرق</strong><span>Excel و Word والعمل تحت الضغط</span></div></div></div>
+          <div className="experience-row"><div className="experience-heading"><SectionKicker light>رحلة الخبرة</SectionKicker><span>2015 — الآن</span></div><div className="experience-list"><div><strong>مشرف ألياف ضوئية</strong><span>Joint Venture / Nimer Al-Lawzi & Partners · 2020–2021</span></div><div><strong>مهندس اتصالات ومبيعات FTTH</strong><span>STRAND Telecommunication Technology · 2017–2018</span></div><div><strong>مشرف ميداني</strong><span>MASAR United Contracting Company · 2015–2017</span></div><div><strong>فني صيانة CCTV وشبكات</strong><span>Siran Contracting Company · 2015–2017</span></div></div></div>
         </div>
       </section>
 
