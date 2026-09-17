@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محاكاة قانون الجاذبية والسقوط الحر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .canvas-container {
+            background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #334155;
+            border-radius: 3px;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+<style>
+.site-return{position:fixed;z-index:99999;top:12px;left:14px;display:flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(14,30,40,.82);backdrop-filter:blur(10px);color:#fff;text-decoration:none;font:700 12px system-ui,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:.2s}
+.site-return:hover{background:#efbd86;color:#17212b;transform:translateY(-2px)}
+</style></head>
+<a class="site-return" href="/" aria-label="العودة إلى مختبر الإبداع الرقمي">↩ العودة للمختبر</a><body class="min-h-screen flex flex-col">
+
+    <header class="glass-panel text-center py-6 shadow-lg relative z-10 border-b border-slate-700">
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-2">
+            <i class="fa-solid fa-earth-americas mr-2"></i> مختبر الجاذبية التفاعلي
+        </h1>
+        <p class="text-slate-400 max-w-3xl mx-auto px-4 text-sm md:text-base">
+            اكتشف كيف تسقط الأجسام تحت تأثير الجاذبية. جرب تغيير كتل الأجسام، وتفعيل مقاومة الهواء، أو حتى السفر إلى كواكب أخرى لاختبار قانون السقوط الحر لغاليليو ونيوتن!
+        </p>
+    </header>
+
+    <main class="flex-grow flex flex-col lg:flex-row p-4 gap-6 max-w-7xl mx-auto w-full">
+        
+        <!-- Controls Panel -->
+        <aside class="glass-panel rounded-2xl p-6 lg:w-1/3 flex flex-col gap-6 shadow-2xl h-fit">
+            
+            <div class="border-b border-slate-600 pb-4">
+                <h2 class="text-xl font-bold mb-4 text-blue-300"><i class="fa-solid fa-sliders"></i> لوحة التحكم</h2>
+                
+                <!-- Environment Selection -->
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-2">بيئة السقوط (الجاذبية)</label>
+                    <select id="gravitySelect" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                        <option value="9.81">🌍 كوكب الأرض (9.81 m/s²)</option>
+                        <option value="1.62">🌕 القمر (1.62 m/s²)</option>
+                        <option value="24.79">🪐 المشتري (24.79 m/s²)</option>
+                        <option value="3.72">🔴 المريخ (3.72 m/s²)</option>
+                    </select>
+                </div>
+
+                <!-- Air Resistance Toggle -->
+                <div class="flex items-center justify-between bg-slate-800 p-3 rounded-lg border border-slate-600">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-wind text-slate-400"></i>
+                        <label class="text-sm font-semibold">مقاومة الهواء</label>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="airResistance" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                    </label>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">تؤثر مقاومة الهواء بشكل أكبر على الأجسام الخفيفة وذات المساحة الأكبر.</p>
+            </div>
+
+            <div class="flex flex-col gap-5">
+                <!-- Object 1 (Red) -->
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-red-900/30">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-bold text-red-400"><i class="fa-solid fa-circle"></i> الكرة الحمراء</label>
+                        <span id="mass1Display" class="text-xs font-mono bg-slate-900 px-2 py-1 rounded">1 كجم</span>
+                    </div>
+                    <input type="range" id="mass1" min="1" max="100" value="1">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>خفيفة (ريشة)</span>
+                        <span>ثقيلة (حديد)</span>
+                    </div>
+                </div>
+
+                <!-- Object 2 (Blue) -->
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-blue-900/30">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-bold text-blue-400"><i class="fa-solid fa-circle"></i> الكرة الزرقاء</label>
+                        <span id="mass2Display" class="text-xs font-mono bg-slate-900 px-2 py-1 rounded">50 كجم</span>
+                    </div>
+                    <input type="range" id="mass2" min="1" max="100" value="50">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>خفيفة (ريشة)</span>
+                        <span>ثقيلة (حديد)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 mt-auto pt-4 border-t border-slate-600">
+                <button id="startBtn" class="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg transform transition active:scale-95 flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-play"></i> إسقاط
+                </button>
+                <button id="resetBtn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg transform transition active:scale-95 flex justify-center items-center gap-2 border border-slate-500">
+                    <i class="fa-solid fa-rotate-right"></i> إعادة
+                </button>
+            </div>
+        </aside>
+
+        <section class="glass-panel rounded-2xl flex-grow overflow-hidden shadow-2xl relative border border-slate-700 flex flex-col">
+            <!-- Overlay Stats -->
+            <div class="absolute top-4 left-4 right-4 flex justify-between z-10 pointer-events-none">
+                <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700 text-sm font-mono backdrop-blur-sm">
+                    <div class="text-slate-300 mb-1">الوقت المنقضي: <span id="timeDisplay" class="text-emerald-400 font-bold text-lg">0.00</span> ثانية</div>
+                    <div class="text-slate-300">الارتفاع: <span class="text-yellow-400 font-bold">100</span> متر</div>
+                </div>
+                
+                <div id="winnerBanner" class="hidden bg-emerald-900/80 border border-emerald-500 text-emerald-100 p-3 rounded-lg backdrop-blur-sm text-center animate-bounce">
+                    <h3 class="font-bold">انتهى السقوط!</h3>
+                    <p class="text-xs" id="winnerText"></p>
+                </div>
+            </div>
+
+            <!-- The Canvas -->
+            <canvas id="simCanvas" class="canvas-container w-full h-[500px] lg:h-full cursor-crosshair rounded-t-2xl"></canvas>
+            
+            <!-- Ground Element -->
+            <div class="h-8 bg-gradient-to-b from-slate-600 to-slate-800 border-t-4 border-slate-500 w-full rounded-b-2xl flex items-center justify-center relative">
+                <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, #000 0, #000 10px, transparent 10px, transparent 20px);"></div>
+                <span class="relative z-10 text-xs font-bold text-slate-400 tracking-widest">سـطـح الأرض</span>
+            </div>
+        </section>
+    </main>
+
+    <footer class="glass-panel mt-auto py-6 border-t border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-8 text-sm">
+            <div>
+                <h3 class="font-bold text-lg text-emerald-400 mb-2"><i class="fa-solid fa-lightbulb"></i> هل تعلم؟ (مبدأ التكافؤ)</h3>
+                <p class="text-slate-300 leading-relaxed">
+                    أثبت <strong>جاليليو جاليلي</strong> أن جميع الأجسام تسقط بنفس التسارع في مجال جاذبية معين، بغض النظر عن كتلتها (إذا أهملنا مقاومة الهواء). في عام 1971، قام رائد الفضاء ديفيد سكوت بإسقاط مطرقة وريشة معاً على سطح القمر (حيث لا يوجد هواء)، ووصل كلاهما إلى السطح في نفس اللحظة!
+                </p>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-blue-400 mb-2"><i class="fa-solid fa-atom"></i> الفيزياء خلف المحاكاة</h3>
+                <p class="text-slate-300 leading-relaxed mb-2">
+                    المعادلة الأساسية للسقوط الحر: <code class="bg-slate-800 px-1 rounded text-pink-400 font-mono text-left inline-block direction-ltr">d = ½ g t²</code>
+                </p>
+                <p class="text-slate-300 leading-relaxed">
+                    حيث <strong>d</strong> هي المسافة، و <strong>g</strong> هي عجلة الجاذبية، و <strong>t</strong> هو الزمن. عند تفعيل مقاومة الهواء، تتولد قوة معاكسة تعتمد على سرعة الجسم وكتلته، مما يقلل من تسارع الأجسام الأخف وزناً بشكل ملحوظ.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Setup Canvas ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // --- UI Elements ---
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const gravitySelect = document.getElementById('gravitySelect');
+        const airResistanceCheck = document.getElementById('airResistance');
+        const mass1Input = document.getElementById('mass1');
+        const mass2Input = document.getElementById('mass2');
+        const mass1Display = document.getElementById('mass1Display');
+        const mass2Display = document.getElementById('mass2Display');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const winnerBanner = document.getElementById('winnerBanner');
+        const winnerText = document.getElementById('winnerText');
+
+        // --- Physics & Simulation Constants ---
+        // Let's assume canvas height represents 100 meters.
+        const SIM_HEIGHT_METERS = 100; 
+        let pixelsPerMeter = 1; // Will be calculated on resize
+        
+        // Physics state
+        let isRunning = false;
+        let animationFrameId;
+        let lastTime = 0;
+        let simulationTime = 0;
+
+        // Object classes
+        class FallingObject {
+            constructor(xPercent, color, mass) {
+                this.xPercent = xPercent; // Position horizontally (percentage)
+                this.y = 0; // Position vertically in meters (0 is top)
+                this.velocity = 0; // m/s
+                this.color = color;
+                this.mass = mass; // kg
+                this.radius = 0; // px, determined by mass for visual effect
+                this.hasLanded = false;
+            }
+
+            updateMass(newMass) {
+                this.mass = newMass;
+                // Scale radius visually: base radius + log scale of mass
+                this.radius = 15 + (Math.log10(this.mass) * 10);
+            }
+
+            reset() {
+                this.y = 0;
+                this.velocity = 0;
+                this.hasLanded = false;
+            }
+
+            // Physics step
+            update(dt, gravity, hasAirResistance) {
+                if (this.hasLanded) return;
+
+                let acceleration = gravity;
+
+                // Simple Air Resistance Model: F_drag = c * v^2
+                // a = g - (F_drag / m)
+                if (hasAirResistance) {
+                    // Drag coefficient (simplified). Assume both objects have similar shape but mass differs.
+                    // A lighter object is slowed down MUCH more than a heavier one.
+                    const dragCoefficient = 0.5; 
+                    const dragForce = dragCoefficient * this.velocity * this.velocity;
+                    const dragAcceleration = dragForce / this.mass;
+                    
+                    acceleration = gravity - dragAcceleration;
+                    if (acceleration < 0) acceleration = 0; // Terminal velocity reached
+                }
+
+                // Update velocity and position
+                this.velocity += acceleration * dt;
+                this.y += this.velocity * dt;
+
+                // Collision with ground
+                if (this.y >= SIM_HEIGHT_METERS) {
+                    this.y = SIM_HEIGHT_METERS;
+                    this.velocity = 0;
+                    this.hasLanded = true;
+                }
+            }
+
+            draw(ctx, canvasWidth, canvasHeight) {
+                const x = canvasWidth * this.xPercent;
+                // Calculate y position in pixels. 
+                // We add some padding at top and bottom.
+                const topPadding = this.radius + 10;
+                const bottomPadding = this.radius;
+                const availableHeight = canvasHeight - topPadding - bottomPadding;
+                const yPos = topPadding + (this.y / SIM_HEIGHT_METERS) * availableHeight;
+
+                // Draw trail
+                if (isRunning && !this.hasLanded && this.y > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, topPadding);
+                    ctx.lineTo(x, yPos);
+                    ctx.strokeStyle = this.color + '40'; // Transparent color
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // Draw shadow
+                ctx.beginPath();
+                ctx.ellipse(x, canvasHeight - bottomPadding/2, this.radius * (1 - this.y/SIM_HEIGHT_METERS)*0.8 + 2, this.radius * 0.2, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fill();
+
+                // Draw object
+                ctx.beginPath();
+                ctx.arc(x, yPos, this.radius, 0, Math.PI * 2);
+                
+                // Gradient for 3D effect
+                const gradient = ctx.createRadialGradient(x - this.radius/3, yPos - this.radius/3, this.radius/10, x, yPos, this.radius);
+                gradient.addColorStop(0, '#ffffff');
+                gradient.addColorStop(0.2, this.color);
+                gradient.addColorStop(1, '#000000');
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw label (mass)
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Cairo';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.mass + 'kg', x, yPos);
+            }
+        }
+
+        // Initialize Objects
+        const obj1 = new FallingObject(0.33, '#ef4444', 1);  // Red
+        const obj2 = new FallingObject(0.66, '#3b82f6', 50); // Blue
+
+        // --- Resize and Setup ---
+        function resizeCanvas() {
+            // Make canvas fit container
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            // fixed height logic or responsive
+            canvas.height = canvas.parentElement.clientHeight - 32; // subtract ground height approx
+            
+            pixelsPerMeter = (canvas.height - 60) / SIM_HEIGHT_METERS;
+            drawStatic();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // --- Drawing ---
+        function drawRuler() {
+            const topPadding = 40;
+            const availableHeight = canvas.height - topPadding - 30;
+            
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(20, topPadding, 2, availableHeight);
+            
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Courier';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            
+            for(let i = 0; i <= 10; i++) {
+                const y = topPadding + (i / 10) * availableHeight;
+                ctx.fillRect(20, y, 15, 2);
+                const meters = 100 - (i * 10);
+                ctx.fillText(meters + 'm', 40, y);
+            }
+        }
+
+        function drawStatic() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawRuler();
+            obj1.draw(ctx, canvas.width, canvas.height);
+            obj2.draw(ctx, canvas.width, canvas.height);
+        }
+
+        // --- Main Game/Simulation Loop ---
+        function simulationLoop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const deltaTime = (timestamp - lastTime) / 1000; // seconds
+            lastTime = timestamp;
+
+            if (isRunning) {
+                // Fixed time step for physics stability (optional, but good for precise sim)
+                const gravity = parseFloat(gravitySelect.value);
+                const hasAirResistance = airResistanceCheck.checked;
+
+                // We slow down simulation visually for better observation
+                // actual physics time is slightly slower than real time 
+                const physicsDt = deltaTime * 1.5; 
+                
+                simulationTime += physicsDt;
+                timeDisplay.textContent = simulationTime.toFixed(2);
+
+                obj1.update(physicsDt, gravity, hasAirResistance);
+                obj2.update(physicsDt, gravity, hasAirResistance);
+
+                // Check for end condition
+                if (obj1.hasLanded && obj2.hasLanded) {
+                    isRunning = false;
+                    showWinner();
+                }
+            }
+
+            drawStatic();
+
+            if (isRunning) {
+                animationFrameId = requestAnimationFrame(simulationLoop);
+            }
+        }
+
+        // --- Interaction Logic ---
+        function updateInputs() {
+            const m1 = parseInt(mass1Input.value);
+            const m2 = parseInt(mass2Input.value);
+            mass1Display.textContent = m1 + ' كجم';
+            mass2Display.textContent = m2 + ' كجم';
+            obj1.updateMass(m1);
+            obj2.updateMass(m2);
+            if(!isRunning) drawStatic();
+        }
+
+        mass1Input.addEventListener('input', updateInputs);
+        mass2Input.addEventListener('input', updateInputs);
+
+        function showWinner() {
+            winnerBanner.classList.remove('hidden');
+            let diff = Math.abs(obj1.velocity - obj2.velocity); // velocity at impact isn't strictly tracked well here, let's use time
+            
+            if (airResistanceCheck.checked) {
+                if (obj1.mass > obj2.mass) {
+                    winnerText.textContent = "الكرة الحمراء وصلت أولاً (الأثقل تتغلب على مقاومة الهواء بشكل أفضل)";
+                } else if (obj2.mass > obj1.mass) {
+                    winnerText.textContent = "الكرة الزرقاء وصلت أولاً (الأثقل تتغلب على مقاومة الهواء بشكل أفضل)";
+                } else {
+                    winnerText.textContent = "وصلتا معاً! (نفس الكتلة ونفس مقاومة الهواء)";
+                }
+            } else {
+                winnerText.textContent = "وصلتا معاً في نفس اللحظة بالضبط! (في الفراغ، الكتلة لا تؤثر على سرعة السقوط)";
+            }
+        }
+
+        startBtn.addEventListener('click', () => {
+            if (isRunning) return;
+            
+            // If already landed, reset first
+            if (obj1.hasLanded && obj2.hasLanded) {
+                resetSim();
+            }
+
+            isRunning = true;
+            lastTime = performance.now();
+            winnerBanner.classList.add('hidden');
+            startBtn.innerHTML = '<i class="fa-solid fa-pause"></i> قيد التشغيل...';
+            startBtn.classList.replace('from-emerald-500', 'from-amber-500');
+            startBtn.classList.replace('to-emerald-600', 'to-amber-600');
+            
+            animationFrameId = requestAnimationFrame(simulationLoop);
+        });
+
+        function resetSim() {
+            isRunning = false;
+            cancelAnimationFrame(animationFrameId);
+            obj1.reset();
+            obj2.reset();
+            simulationTime = 0;
+            timeDisplay.textContent = "0.00";
+            winnerBanner.classList.add('hidden');
+            
+            startBtn.innerHTML = '<i class="fa-solid fa-play"></i> إسقاط';
+            startBtn.classList.replace('from-amber-500', 'from-emerald-500');
+            startBtn.classList.replace('to-amber-600', 'to-emerald-600');
+            
+            updateInputs(); // updates sizes based on sliders and draws
+        }
+
+        resetBtn.addEventListener('click', resetSim);
+
+        // --- Initialization ---
+        window.onload = () => {
+            updateInputs();
+            resizeCanvas();
+        };
+
+    </script>
+</body>
+</html>

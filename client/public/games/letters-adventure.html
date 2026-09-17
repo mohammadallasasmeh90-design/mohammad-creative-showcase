@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#7bd3f7">
+<title>مغامرة الحروف | ABC Adventure</title>
+<style>
+/* ============ الأساسيات ============ */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{
+  font-family:"Segoe UI","Comic Sans MS","Tajawal","Noto Naskh Arabic",system-ui,sans-serif;
+  background:linear-gradient(180deg,#8fdcff 0%,#c9f0ff 45%,#fff3cf 100%) fixed;
+  color:#20303a;user-select:none;-webkit-user-select:none;overscroll-behavior:none;
+  min-height:100%;
+}
+#app{max-width:820px;margin:0 auto;padding:10px 12px 26px;position:relative}
+button{font-family:inherit;border:0;background:none;cursor:pointer;color:inherit}
+
+/* ============ الشريط العلوي ============ */
+header{display:flex;align-items:center;gap:10px;padding:6px 2px 12px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:clamp(19px,5.2vw,27px);letter-spacing:.3px}
+.logo .mark{width:42px;height:42px;flex:0 0 42px;border-radius:14px;background:#fff;
+  box-shadow:0 4px 0 rgba(0,0,0,.10);display:grid;place-items:center;font-size:22px;color:#ff6b6b}
+.stars{margin-inline-start:auto;display:flex;align-items:center;gap:7px;background:#fff;border-radius:999px;
+  padding:7px 14px;box-shadow:0 4px 0 rgba(0,0,0,.08);font-weight:900;font-size:18px}
+.stars .ic{font-size:19px}
+.iconbtn{width:46px;height:46px;border-radius:14px;background:#fff;box-shadow:0 4px 0 rgba(0,0,0,.08);
+  display:grid;place-items:center;font-size:20px;font-weight:800}
+.iconbtn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.08)}
+#langBtn{width:auto;padding:0 14px;font-size:16px;letter-spacing:1px}
+
+/* ============ بطاقات الأقسام ============ */
+.card{background:#fff;border-radius:28px;padding:16px;box-shadow:0 10px 0 rgba(0,0,0,.07);margin-bottom:14px}
+.screen{display:none;animation:pop .25s ease}
+.screen.on{display:block}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{border-radius:24px;padding:20px 14px 18px;color:#fff;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.14);
+  transition:transform .12s}
+.mode:active{transform:translateY(5px) scale(.99);box-shadow:0 3px 0 rgba(0,0,0,.14)}
+.mode .em{font-size:44px;line-height:1;display:block;margin-bottom:8px}
+.mode b{display:block;font-size:clamp(17px,4.6vw,22px);font-weight:900;text-shadow:0 2px 0 rgba(0,0,0,.12)}
+.mode span{display:block;font-size:13px;opacity:.95;margin-top:5px;line-height:1.5}
+.m-learn{background:linear-gradient(160deg,#ff9f43,#ff6b6b)}
+.m-match{background:linear-gradient(160deg,#26c6da,#3d8bff)}
+.m-listen{background:linear-gradient(160deg,#a55eea,#6c5ce7)}
+.m-write{background:linear-gradient(160deg,#2ecc71,#12a15b)}
+
+/* ============ شبكة الحروف ============ */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(6,1fr)}}
+.tile{position:relative;aspect-ratio:1;border-radius:18px;display:grid;place-items:center;color:#fff;
+  box-shadow:0 5px 0 rgba(0,0,0,.14);transition:transform .1s;overflow:hidden}
+.tile:active{transform:translateY(3px) scale(.98)}
+.tile .lt{font-size:clamp(26px,8vw,34px);font-weight:900;line-height:.9;text-shadow:0 2px 0 rgba(0,0,0,.15)}
+.tile .sm{font-size:13px;font-weight:800;opacity:.9}
+.tile svg{width:56%;height:44%;margin:0 auto;display:block}
+.tile.sel{outline:4px solid #ffe066;outline-offset:-4px}
+
+/* ============ بطاقة الحرف الكبير ============ */
+.letterview{text-align:center;margin-top:14px}
+.lv-top{display:flex;align-items:center;justify-content:center;gap:6px}
+.lv-lt{font-size:clamp(70px,26vw,140px);font-weight:900;line-height:.95;color:#ff6b6b;text-shadow:0 6px 0 rgba(0,0,0,.08)}
+.lv-lt small{display:block;font-size:.34em;font-weight:900;opacity:.75}
+.lv-stage{background:#f3fbff;border-radius:26px;padding:6px 10px 0;margin-top:4px}
+.lv-stage svg{width:min(58vw,250px);height:min(58vw,250px);display:block;margin:0 auto}
+.lv-word{font-size:clamp(28px,9vw,44px);font-weight:900;letter-spacing:1px;margin:2px 0 0}
+.lv-ar{font-size:clamp(17px,5vw,22px);color:#5b6b76;font-weight:700;margin:2px 0 10px}
+.lv-phon{display:inline-block;background:#fff2c2;border-radius:999px;padding:6px 14px;font-weight:900;font-size:15px;margin-bottom:10px}
+
+/* ============ أزرار ============ */
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.btn{background:#ffd23f;color:#3a2b00;font-weight:900;font-size:clamp(15px,4.3vw,19px);padding:13px 20px;border-radius:999px;
+  box-shadow:0 5px 0 rgba(0,0,0,.13)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.13)}
+.btn.alt{background:#fff;color:#20303a}
+.btn.go{background:#3d8bff;color:#fff}
+.btn.big{width:100%;font-size:clamp(18px,5.5vw,24px);padding:16px}
+.ttl{font-size:clamp(19px,5.4vw,25px);font-weight:900;margin:2px 2px 12px;display:flex;align-items:center;gap:8px}
+.hint{font-size:14px;color:#5b6b76;text-align:center;margin:0 0 10px;font-weight:700}
+
+/* ============ لعبة المطابقة ============ */
+.matchwrap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pcard{border-radius:20px;background:#f3f7fa;border:4px solid #dfe9f0;display:grid;place-items:center;
+  aspect-ratio:1;padding:8px;transition:transform .12s,background .2s,border-color .2s}
+.pcard:active{transform:scale(.97)}
+.pcard svg{width:78%;height:78%}
+.pcard .lt{font-size:clamp(40px,13vw,64px);font-weight:900;color:#3d8bff}
+.pcard.pick{background:#fff2c2;border-color:#ffd23f}
+.pcard.done{background:#e6f9ec;border-color:#2ecc71;opacity:.75}
+.pcard.bad{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* ============ لعبة الاستماع ============ */
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.opt{aspect-ratio:1;border-radius:22px;display:grid;place-items:center;color:#fff;font-weight:900;
+  font-size:clamp(44px,15vw,74px);box-shadow:0 6px 0 rgba(0,0,0,.14);text-shadow:0 3px 0 rgba(0,0,0,.15)}
+.opt:active{transform:translateY(4px)}
+.opt.good{background:#2ecc71!important;animation:jump .5s}
+.opt.bad{background:#cfd8dd!important;animation:shake .4s}
+@keyframes jump{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.hero{background:#f3fbff;border-radius:24px;padding:14px;text-align:center}
+.hero .big-ear{font-size:62px;line-height:1}
+.bar{height:14px;background:#e9f1f6;border-radius:999px;overflow:hidden;margin:8px 0 14px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2ecc71,#a3e05a);border-radius:999px;transition:width .4s}
+
+/* ============ الكتابة بالإصبع ============ */
+#pad{display:block;width:100%;height:auto;background:#fff;border-radius:24px;border:4px dashed #cfe0ec;touch-action:none}
+
+/* ============ شريط التنقل السفلي ============ */
+nav{position:sticky;bottom:8px;display:flex;gap:6px;justify-content:center;background:#ffffffdd;backdrop-filter:blur(6px);
+  border-radius:999px;padding:6px;box-shadow:0 6px 0 rgba(0,0,0,.07);margin-top:6px}
+nav .nb{flex:1;max-width:120px;border-radius:999px;padding:10px 4px;font-weight:900;font-size:13px;color:#5b6b76;text-align:center}
+nav .nb.on{background:#3d8bff;color:#fff}
+
+/* ============ الاحتفال ============ */
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:60}
+.cft{position:absolute;width:12px;height:18px;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.85}}
+#toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) scale(.8);background:#20303a;color:#fff;
+  padding:12px 22px;border-radius:999px;font-weight:900;font-size:17px;opacity:0;transition:.25s;z-index:70;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) scale(1)}
+.winscreen{text-align:center;padding:22px 14px}
+.winscreen .wem{font-size:76px;animation:jump 1.2s infinite}
+.winscreen h2{font-size:clamp(24px,7vw,34px);margin:8px 0 4px}
+.winstars{font-size:34px;letter-spacing:6px;margin:6px 0 14px}
+footer{text-align:center;font-size:12px;color:#4b6270;opacity:.8;margin-top:8px;line-height:1.8}
+</style>
+<style>
+.site-return{position:fixed;z-index:99999;top:12px;left:14px;display:flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(14,30,40,.82);backdrop-filter:blur(10px);color:#fff;text-decoration:none;font:700 12px system-ui,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:.2s}
+.site-return:hover{background:#efbd86;color:#17212b;transform:translateY(-2px)}
+</style></head>
+<a class="site-return" href="/" aria-label="العودة إلى مختبر الإبداع الرقمي">↩ العودة للمختبر</a><body>
+<div id="confetti"></div>
+<div id="toast"></div>
+
+<div id="app">
+  <header>
+    <div class="logo"><div class="mark">A</div><div id="appTitle">مغامرة الحروف</div></div>
+    <div class="stars"><span class="ic">⭐</span><span id="starCount">0</span></div>
+    <button class="iconbtn" id="soundBtn" title="sound">🔊</button>
+    <button class="iconbtn" id="langBtn">EN</button>
+  </header>
+
+  <!-- ================= الرئيسية ================= -->
+  <section class="screen on" id="s-home">
+    <div class="card" style="background:linear-gradient(160deg,#ffe9a8,#ffd6e0)">
+      <div style="font-size:clamp(20px,5.6vw,26px);font-weight:900;text-align:center;line-height:1.6" id="tagline"></div>
+    </div>
+    <div class="modes">
+      <button class="mode m-learn"  data-go="learn"><span class="em">🔤</span><b data-t="learn_t"></b><span data-t="learn_s"></span></button>
+      <button class="mode m-match"  data-go="match"><span class="em">🧩</span><b data-t="match_t"></b><span data-t="match_s"></span></button>
+      <button class="mode m-listen" data-go="listen"><span class="em">👂</span><b data-t="listen_t"></b><span data-t="listen_s"></span></button>
+      <button class="mode m-write"  data-go="write"><span class="em">✏️</span><b data-t="write_t"></b><span data-t="write_s"></span></button>
+    </div>
+    <div class="card">
+      <div class="ttl" id="parentsTtl">👨‍👩‍👧 للوالدين والمعلّم</div>
+      <div id="parentsTxt" style="font-size:14px;line-height:1.9;color:#42565f"></div>
+    </div>
+  </section>
+
+  <!-- ================= تعلّم ================= -->
+  <section class="screen" id="s-learn">
+    <div class="card">
+      <div class="ttl">🔤 <span data-t="learn_t"></span></div>
+      <div class="grid" id="letterGrid"></div>
+      <div class="letterview">
+        <div class="lv-top"><div class="lv-lt" id="lvLt"></div></div>
+        <div class="lv-stage"><div id="lvPic"></div></div>
+        <div class="lv-word" id="lvWord"></div>
+        <div class="lv-ar" id="lvAr"></div>
+        <div class="lv-phon" id="lvPhon"></div>
+        <div class="row">
+          <button class="btn go" id="sayBtn">🔊 <span data-t="say_letter"></span></button>
+          <button class="btn alt" id="slowBtn">🐢 <span data-t="slow"></span></button>
+        </div>
+        <div class="row">
+          <button class="btn alt" id="prevBtn">◀</button>
+          <button class="btn alt" id="replayBtn">🔁 <span data-t="say_word"></span></button>
+          <button class="btn alt" id="nextBtn">▶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= مطابقة ================= -->
+  <section class="screen" id="s-match">
+    <div class="card">
+      <div class="ttl">🧩 <span data-t="match_t"></span></div>
+      <p class="hint" data-t="match_h"></p>
+      <div class="bar"><i id="matchBar"></i></div>
+      <div class="matchwrap" id="matchWrap"></div>
+      <div class="row"><button class="btn alt" id="matchNew">🔄 <span data-t="newround"></span></button></div>
+    </div>
+  </section>
+
+  <!-- ================= استماع ================= -->
+  <section class="screen" id="s-listen">
+    <div class="card">
+      <div class="ttl">👂 <span data-t="listen_t"></span></div>
+      <div class="hero">
+        <div class="big-ear">🦻</div>
+        <div style="font-weight:900;font-size:17px;margin:4px 0 10px" data-t="listen_q"></div>
+        <div class="row" style="margin:0">
+          <button class="btn go" id="earBtn">🔊 <span data-t="listen_play"></span></button>
+          <button class="btn alt" id="earSlowBtn">🐢 <span data-t="slow"></span></button>
+        </div>
+      </div>
+      <div class="bar"><i id="listenBar"></i></div>
+      <div class="opts" id="listenOpts"></div>
+      <div class="row"><button class="btn alt" id="listenNew">🔄 <span data-t="newround"></span></button></div>
+    </div>
+  </section>
+
+  <!-- ================= كتابة ================= -->
+  <section class="screen" id="s-write">
+    <div class="card">
+      <div class="ttl">✏️ <span data-t="write_t"></span></div>
+      <p class="hint" data-t="write_h"></p>
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn alt" id="wPrev">◀</button>
+        <button class="btn go" id="wSay">🔊 <span data-t="say_letter"></span></button>
+        <button class="btn alt" id="wNext">▶</button>
+      </div>
+      <canvas id="pad"></canvas>
+      <div class="row">
+        <button class="btn alt" id="wClear">🧽 <span data-t="write_clear"></span></button>
+        <button class="btn" id="wDone">✅ <span data-t="write_done"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= الفوز ================= -->
+  <section class="screen" id="s-win">
+    <div class="card winscreen">
+      <div class="wem">🏆</div>
+      <h2 data-t="win_t"></h2>
+      <div class="winstars" id="winStars"></div>
+      <div style="font-weight:800;color:#5b6b76;margin-bottom:14px" id="winMsg"></div>
+      <div class="row" style="flex-direction:column">
+        <button class="btn big go" id="againBtn" data-t="again"></button>
+        <button class="btn big alt" id="homeBtn" data-t="home"></button>
+      </div>
+    </div>
+  </section>
+
+  <nav>
+    <button class="nb on" data-go="home" data-t="home"></button>
+    <button class="nb" data-go="learn" data-t="learn_short"></button>
+    <button class="nb" data-go="match" data-t="match_short"></button>
+    <button class="nb" data-go="listen" data-t="listen_short"></button>
+    <button class="nb" data-go="write" data-t="write_short"></button>
+  </nav>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+"use strict";
+/* =========================================================
+   مغامرة الحروف — لعبة تعلّم الحروف الإنجليزية للأطفال 3-5 سنوات
+   ملف واحد، بدون إنترنت، بدون مكتبات.
+   ========================================================= */
+
+/* ---------- 1) بيانات الحروف: كلمة + صورة SVG + صوت ---------- */
+const SV = (inner, vb) => '<svg viewBox="' + (vb || "0 0 160 160") + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + inner + '</svg>';
+
+const LETTERS = [
+ {l:"A",w:"Apple",ar:"تفاحة",s:"a, a, apple",c:"#ff6b6b",svg:SV('<path d="M80 46 C 86 30 100 28 112 32" fill="none" stroke="#7a4a2b" stroke-width="8" stroke-linecap="round"/><path d="M92 34 c 16 -16 36 -10 36 -10 c 0 0 -6 22 -26 22 c -8 0 -12 -6 -10 -12z" fill="#2ecc71"/><circle cx="62" cy="90" r="42" fill="#e94f4f"/><circle cx="100" cy="90" r="42" fill="#ff6b6b"/><ellipse cx="76" cy="72" rx="14" ry="9" fill="#fff" opacity=".45"/>')},
+ {l:"B",w:"Ball",ar:"كرة",s:"b, b, ball",c:"#f2803c",svg:SV('<circle cx="80" cy="84" r="54" fill="#ff9f43"/><path d="M34 60 C 60 100 100 100 126 60" fill="none" stroke="#2d3436" stroke-width="8"/><path d="M34 108 C 60 68 100 68 126 108" fill="none" stroke="#2d3436" stroke-width="8"/><circle cx="62" cy="52" r="9" fill="#fff" opacity=".5"/>')},
+ {l:"C",w:"Cat",ar:"قطّة",s:"c, c, cat",c:"#c88a4a",svg:SV('<path d="M44 66 L 38 30 L 72 52z" fill="#f2803c"/><path d="M116 66 L 122 30 L 88 52z" fill="#f2803c"/><circle cx="80" cy="86" r="44" fill="#f8b26a"/><circle cx="64" cy="78" r="6" fill="#2d3436"/><circle cx="96" cy="78" r="6" fill="#2d3436"/><path d="M75 96 h10 l-5 7z" fill="#ff6b81"/><path d="M80 103 v6 M80 109 c -5 7 -14 6 -17 1 M80 109 c 5 7 14 6 17 1" fill="none" stroke="#2d3436" stroke-width="3" stroke-linecap="round"/><path d="M46 92 h-22 M48 102 L 26 108 M114 92 h22 M112 102 l22 6" stroke="#5b4632" stroke-width="3" stroke-linecap="round"/>')},
+ {l:"D",w:"Duck",ar:"بطة",s:"d, d, duck",c:"#f0a41f",svg:SV('<path d="M34 100 c 0 26 24 36 48 36 c 28 0 46 -14 50 -30z" fill="#ffe066"/><circle cx="94" cy="62" r="30" fill="#ffd23f"/><path d="M118 56 l30 9 -30 11z" fill="#ff9f1a"/><circle cx="102" cy="54" r="5" fill="#2d3436"/><path d="M50 100 c 14 10 32 10 44 0" fill="none" stroke="#f0b429" stroke-width="5" stroke-linecap="round"/>')},
+ {l:"E",w:"Egg",ar:"بيضة",s:"e, e, egg",c:"#f5c542",svg:SV('<path d="M80 22 C 116 22 130 76 130 100 a 50 44 0 0 1 -100 0 c 0 -24 14 -78 50 -78z" fill="#fffaf0" stroke="#f0c36a" stroke-width="6"/><ellipse cx="62" cy="66" rx="12" ry="18" fill="#fff" opacity=".9"/><circle cx="100" cy="112" r="5" fill="#ffe9b8"/>')},
+ {l:"F",w:"Fish",ar:"سمكة",s:"f, f, fish",c:"#22b8cf",svg:SV('<path d="M124 80 L 156 54 L 156 106z" fill="#12a5b3"/><ellipse cx="70" cy="80" rx="58" ry="40" fill="#4dd0e1"/><path d="M30 70 C 46 56 66 56 80 66" fill="none" stroke="#12a5b3" stroke-width="6" stroke-linecap="round"/><circle cx="104" cy="70" r="8" fill="#fff"/><circle cx="106" cy="70" r="4" fill="#2d3436"/><path d="M112 94 c -6 6 -14 6 -20 2" fill="none" stroke="#0e8f9b" stroke-width="5" stroke-linecap="round"/>')},
+ {l:"G",w:"Grapes",ar:"عنب",s:"g, g, grapes",c:"#8e44ad",svg:SV('<path d="M82 42 C 82 28 92 20 104 18" fill="none" stroke="#7a4a2b" stroke-width="7" stroke-linecap="round"/><path d="M88 40 c -20 -16 -42 -8 -42 -8 c 0 0 14 20 32 18z" fill="#2ecc71"/><circle cx="60" cy="60" r="18" fill="#9b59b6"/><circle cx="98" cy="60" r="18" fill="#8e44ad"/><circle cx="79" cy="80" r="18" fill="#9b59b6"/><circle cx="42" cy="82" r="18" fill="#8e44ad"/><circle cx="116" cy="82" r="18" fill="#9b59b6"/><circle cx="60" cy="104" r="18" fill="#8e44ad"/><circle cx="98" cy="104" r="18" fill="#9b59b6"/><circle cx="79" cy="126" r="18" fill="#8e44ad"/>')},
+ {l:"H",w:"Hat",ar:"قبّعة",s:"h, h, hat",c:"#6d4c41",svg:SV('<path d="M48 42 h64 a10 10 0 0 1 10 10 v44 h-84 v-44 a10 10 0 0 1 10 -10z" fill="#8d6e63"/><rect x="38" y="92" width="84" height="16" rx="8" fill="#6d4c41"/><rect x="38" y="78" width="84" height="16" rx="6" fill="#ff6b6b"/><ellipse cx="80" cy="112" rx="62" ry="14" fill="#a1887f"/><rect x="18" y="100" width="124" height="14" rx="7" fill="#8d6e63"/>')},
+ {l:"I",w:"Ice cream",ar:"مثلّجة",s:"i, i, ice cream",c:"#ff8fab",svg:SV('<path d="M52 78 L 108 78 L 80 146z" fill="#e0a565"/><path d="M58 90 L 102 90 M66 106 L 94 106" stroke="#c78b4a" stroke-width="4"/><circle cx="80" cy="62" r="34" fill="#ffc2d1"/><path d="M46 62 c 6 14 16 18 16 18 c 0 0 4 -12 0 -18 M98 62 c -4 14 14 18 14 18" fill="#ffc2d1"/><circle cx="80" cy="24" r="9" fill="#e63946"/><path d="M80 33 v8" stroke="#2ecc71" stroke-width="4"/>')},
+ {l:"J",w:"Juice",ar:"عصير",s:"j, j, juice",c:"#ff9800",svg:SV('<rect x="44" y="50" width="72" height="92" rx="8" fill="#ffb74d"/><path d="M44 50 L 62 26 L 98 26 L 116 50z" fill="#fb8c00"/><rect x="44" y="78" width="72" height="30" fill="#fff3e0"/><path d="M98 44 L 128 12" stroke="#e53935" stroke-width="10" stroke-linecap="round"/><text x="80" y="100" font-size="22" font-family="sans-serif" font-weight="bold" fill="#ef6c00" text-anchor="middle">OJ</text>')},
+ {l:"K",w:"Kite",ar:"طائرة ورقية",s:"k, k, kite",c:"#e91e63",svg:SV('<path d="M80 18 L 132 74 L 80 130 L 28 74z" fill="#ff6b9d"/><path d="M80 18 L 80 130 M28 74 L 132 74" stroke="#fff" stroke-width="6"/><path d="M80 130 c -22 12 14 22 -4 30" fill="none" stroke="#2d3436" stroke-width="4"/><path d="M70 142 l18 8 M74 154 l16 6" stroke="#ffd23f" stroke-width="7" stroke-linecap="round"/>')},
+ {l:"L",w:"Lion",ar:"أسد",s:"l, l, lion",c:"#e07b00",svg:SV('<circle cx="54" cy="48" r="18" fill="#e08a2b"/><circle cx="106" cy="48" r="18" fill="#e08a2b"/><circle cx="40" cy="80" r="18" fill="#e08a2b"/><circle cx="120" cy="80" r="18" fill="#e08a2b"/><circle cx="54" cy="114" r="18" fill="#e08a2b"/><circle cx="106" cy="114" r="18" fill="#e08a2b"/><circle cx="80" cy="128" r="18" fill="#e08a2b"/><circle cx="80" cy="36" r="18" fill="#e08a2b"/><circle cx="80" cy="80" r="44" fill="#ffc46b"/><circle cx="66" cy="74" r="6" fill="#2d3436"/><circle cx="94" cy="74" r="6" fill="#2d3436"/><path d="M72 94 h16 l-8 10z" fill="#b26a2b"/><path d="M80 104 v8 M80 112 c -8 8 -18 6 -22 0 M80 112 c 8 8 18 6 22 0" fill="none" stroke="#8d5524" stroke-width="4" stroke-linecap="round"/>')},
+ {l:"M",w:"Moon",ar:"قمر",s:"m, m, moon",c:"#f4c430",svg:SV('<path d="M104 18 a 62 62 0 1 0 0 124 a 48 48 0 1 1 0 -124z" fill="#ffe066"/><circle cx="60" cy="52" r="6" fill="#f4c430"/><circle cx="52" cy="98" r="9" fill="#f4c430"/><circle cx="76" cy="126" r="5" fill="#f4c430"/><circle cx="34" cy="40" r="3" fill="#fff3b0"/><path d="M126 40 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#fff3b0"/>')},
+ {l:"N",w:"Nest",ar:"عُشّ",s:"n, n, nest",c:"#8d6e63",svg:SV('<path d="M22 92 C 40 74 120 74 138 92 C 126 130 34 130 22 92z" fill="#a1744f"/><path d="M26 88 C 56 76 104 76 134 88" fill="none" stroke="#8d6e63" stroke-width="8" stroke-linecap="round"/><path d="M30 104 C 60 118 100 118 130 104 M24 96 L 46 116 M136 96 L 114 116" fill="none" stroke="#7a5c3e" stroke-width="6" stroke-linecap="round"/><circle cx="64" cy="78" r="15" fill="#8fd3f4"/><circle cx="94" cy="74" r="15" fill="#b8e6c1"/><circle cx="78" cy="64" r="13" fill="#fff"/>')},
+ {l:"O",w:"Orange",ar:"برتقالة",s:"o, o, orange",c:"#ff8c1a",svg:SV('<circle cx="80" cy="92" r="50" fill="#ff9f1a"/><path d="M80 42 C 84 30 94 26 104 26" fill="none" stroke="#7a4a2b" stroke-width="7" stroke-linecap="round"/><path d="M84 38 c 18 -18 40 -12 40 -12 c 0 0 -8 24 -30 22 -8 0 -12 -6 -10 -10z" fill="#2ecc71"/><circle cx="62" cy="76" r="12" fill="#fff" opacity=".35"/>')},
+ {l:"P",w:"Pig",ar:"خنزير",s:"p, p, pig",c:"#f06292",svg:SV('<path d="M40 56 L 34 26 L 66 44z" fill="#f48fb1"/><path d="M120 56 L 126 26 L 94 44z" fill="#f48fb1"/><circle cx="80" cy="84" r="46" fill="#f8a5c2"/><ellipse cx="80" cy="98" rx="24" ry="18" fill="#f06292"/><circle cx="71" cy="98" r="4" fill="#c2436f"/><circle cx="89" cy="98" r="4" fill="#c2436f"/><circle cx="62" cy="70" r="6" fill="#2d3436"/><circle cx="98" cy="70" r="6" fill="#2d3436"/>')},
+ {l:"Q",w:"Queen",ar:"ملكة",s:"q, q, queen",c:"#ad1457",svg:SV('<circle cx="80" cy="86" r="34" fill="#ffd9a8"/><path d="M56 100 h48 v20 a24 24 0 0 1 -48 0z" fill="#ffd9a8"/><path d="M48 56 L 58 28 L 80 50 L 102 28 L 112 56z" fill="#ffd23f" stroke="#e0a800" stroke-width="4" stroke-linejoin="round"/><circle cx="58" cy="26" r="6" fill="#ff6b6b"/><circle cx="80" cy="46" r="6" fill="#22b8cf"/><circle cx="102" cy="26" r="6" fill="#ff6b6b"/><circle cx="68" cy="88" r="5" fill="#2d3436"/><circle cx="92" cy="88" r="5" fill="#2d3436"/><path d="M70 104 c 6 6 14 6 20 0" fill="none" stroke="#c2436f" stroke-width="4" stroke-linecap="round"/>')},
+ {l:"R",w:"Rabbit",ar:"أرنب",s:"r, r, rabbit",c:"#b0bec5",svg:SV('<ellipse cx="62" cy="44" rx="15" ry="36" fill="#eceff1" transform="rotate(-12 62 44)"/><ellipse cx="98" cy="44" rx="15" ry="36" fill="#eceff1" transform="rotate(12 98 44)"/><ellipse cx="62" cy="48" rx="7" ry="24" fill="#ffc2d1" transform="rotate(-12 62 48)"/><ellipse cx="98" cy="48" rx="7" ry="24" fill="#ffc2d1" transform="rotate(12 98 48)"/><circle cx="80" cy="104" r="42" fill="#eceff1"/><circle cx="66" cy="98" r="6" fill="#2d3436"/><circle cx="94" cy="98" r="6" fill="#2d3436"/><ellipse cx="80" cy="114" rx="8" ry="6" fill="#ff8fab"/><path d="M80 120 v6" stroke="#b0bec5" stroke-width="3"/><circle cx="58" cy="118" r="7" fill="#ffe1e9" opacity=".8"/><circle cx="102" cy="118" r="7" fill="#ffe1e9" opacity=".8"/>')},
+ {l:"S",w:"Sun",ar:"شمس",s:"s, s, sun",c:"#f9a825",svg:SV('<circle cx="80" cy="80" r="40" fill="#ffd23f"/><g stroke="#ffb300" stroke-width="12" stroke-linecap="round"><path d="M80 20 v-14 M80 140 v14 M20 80 h-14 M140 80 h14 M38 38 L 28 28 M122 38 L 132 28 M38 122 L 28 132 M122 122 L 132 132"/></g><circle cx="68" cy="74" r="6" fill="#8d5524"/><circle cx="92" cy="74" r="6" fill="#8d5524"/><path d="M66 92 c 8 10 20 10 28 0" fill="none" stroke="#8d5524" stroke-width="5" stroke-linecap="round"/><circle cx="56" cy="88" r="7" fill="#ff8fab" opacity=".55"/><circle cx="104" cy="88" r="7" fill="#ff8fab" opacity=".55"/>')},
+ {l:"T",w:"Tree",ar:"شجرة",s:"t, t, tree",c:"#2e7d32",svg:SV('<rect x="70" y="92" width="20" height="50" rx="6" fill="#8d6e63"/><circle cx="80" cy="60" r="40" fill="#2ecc71"/><circle cx="48" cy="82" r="26" fill="#27ae60"/><circle cx="112" cy="82" r="26" fill="#27ae60"/><circle cx="60" cy="56" r="7" fill="#ff6b6b"/><circle cx="98" cy="70" r="7" fill="#ff6b6b"/><circle cx="78" cy="42" r="7" fill="#ff6b6b"/><path d="M90 142 h-30" stroke="#6d4c41" stroke-width="6" stroke-linecap="round"/>')},
+ {l:"U",w:"Umbrella",ar:"مظلة",s:"u, u, umbrella",c:"#1e88e5",svg:SV('<path d="M18 86 A 62 62 0 0 1 142 86 L 119 86 A 15 15 0 0 0 89 86 L 80 86 A 15 15 0 0 0 51 86 L 41 86 A 15 15 0 0 0 18 86z" fill="#ff6b6b"/><path d="M18 86 A 62 62 0 0 1 80 24 L 80 86 A 15 15 0 0 0 51 86z" fill="#ffe066"/><path d="M80 86 v42 a 14 14 0 0 1 -28 0" fill="none" stroke="#5b4632" stroke-width="8" stroke-linecap="round"/><circle cx="80" cy="22" r="6" fill="#ffd23f"/>')},
+ {l:"V",w:"Van",ar:"حافلة صغيرة",s:"v, v, van",c:"#0288d1",svg:SV('<path d="M22 94 v-30 a8 8 0 0 1 8 -8 h56 l24 20 h22 a10 10 0 0 1 10 10 v8z" fill="#42a5f5"/><path d="M22 94 h122 v20 a6 6 0 0 1 -6 6 h-110 a6 6 0 0 1 -6 -6z" fill="#1e88e5"/><rect x="34" y="62" width="34" height="24" rx="4" fill="#bbdefb"/><rect x="76" y="66" width="26" height="20" rx="4" fill="#bbdefb"/><circle cx="48" cy="120" r="16" fill="#2d3436"/><circle cx="48" cy="120" r="7" fill="#b0bec5"/><circle cx="118" cy="120" r="16" fill="#2d3436"/><circle cx="118" cy="120" r="7" fill="#b0bec5"/><rect x="136" y="98" width="10" height="8" rx="3" fill="#ffe066"/>')},
+ {l:"W",w:"Watch",ar:"ساعة يد",s:"w, w, watch",c:"#5c6bc0",svg:SV('<rect x="62" y="14" width="36" height="44" rx="12" fill="#7986cb"/><rect x="62" y="102" width="36" height="44" rx="12" fill="#7986cb"/><circle cx="80" cy="80" r="46" fill="#c5cae9" stroke="#5c6bc0" stroke-width="6"/><circle cx="80" cy="80" r="36" fill="#fff"/><path d="M80 80 L 80 54 M80 80 L 100 90" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/><circle cx="80" cy="80" r="5" fill="#ff6b6b"/><rect x="124" y="72" width="10" height="16" rx="4" fill="#5c6bc0"/>')},
+ {l:"X",w:"X-ray",ar:"صورة أشعة",s:"x, x, x-ray",c:"#00897b",svg:SV('<rect x="26" y="20" width="108" height="120" rx="10" fill="#0f2b3d"/><path d="M44 44 C 60 56 100 56 116 44 M44 116 C 60 104 100 104 116 116" fill="none" stroke="#8fe3d0" stroke-width="12" stroke-linecap="round"/><path d="M50 62 C 66 74 94 74 110 62 M50 98 C 66 86 94 86 110 98" fill="none" stroke="#5fc9ae" stroke-width="8" stroke-linecap="round"/><circle cx="52" cy="80" r="9" fill="#b2ffe8"/><circle cx="108" cy="80" r="9" fill="#b2ffe8"/><text x="80" y="150" font-size="0" fill="none">.</text><path d="M64 80 h32" stroke="#e0f7f1" stroke-width="6" stroke-linecap="round"/>')},
+ {l:"Y",w:"Yo-yo",ar:"يويو",s:"y, y, yo-yo",c:"#fbc02d",svg:SV('<circle cx="80" cy="96" r="46" fill="#ffd23f"/><circle cx="80" cy="96" r="46" fill="none" stroke="#f0a800" stroke-width="6"/><circle cx="80" cy="96" r="30" fill="#ff8a65"/><circle cx="80" cy="96" r="12" fill="#fff"/><path d="M80 50 C 62 36 100 30 78 14" fill="none" stroke="#ef5350" stroke-width="7" stroke-linecap="round"/>')},
+ {l:"Z",w:"Zebra",ar:"حمار وحشي",s:"z, z, zebra",c:"#455a64",svg:SV('<rect x="30" y="64" width="102" height="54" rx="26" fill="#f5f7f8"/><path d="M52 66 L 44 116 M70 64 L 62 118 M88 62 L 82 118 M106 64 L 100 116 M122 70 L 118 108" stroke="#2d3436" stroke-width="9"/><path d="M118 76 c 20 -6 34 4 34 18 c 0 14 -16 20 -30 16z" fill="#f5f7f8"/><path d="M140 92 l14 6 -12 8z" fill="#2d3436"/><circle cx="128" cy="84" r="5" fill="#2d3436"/><path d="M104 66 l6 -18 8 16z" fill="#2d3436"/><path d="M86 66 l4 -18 8 16z" fill="#2d3436"/><rect x="42" y="116" width="12" height="26" fill="#f5f7f8"/><rect x="70" y="116" width="12" height="26" fill="#f5f7f8"/><rect x="100" y="116" width="12" height="26" fill="#f5f7f8"/><path d="M112 142 h-8 M84 142 h-8 M56 142 h-8" stroke="#2d3436" stroke-width="9" stroke-linecap="round"/><path d="M32 70 c -12 8 -14 26 -6 38" fill="none" stroke="#2d3436" stroke-width="7" stroke-linecap="round"/>')}
+];
+
+/* ---------- 2) الترجمات ---------- */
+const I18N = {
+ ar:{
+  title:"مغامرة الحروف", tag:"استمع • لمس • العب — تعلّم الحروف الإنجليزية ABC",
+  home:"الرئيسية",
+  learn_t:"أستكشف الحروف", learn_s:"اضغط على أي حرف ليسمع طفلك اسمه وصوته وكلمته",
+  match_t:"طابِق الحرف", match_s:"وصِل الحرف بالصورة الصحيحة",
+  listen_t:"لعبة الأذن", listen_s:"اسمع صوت الحرف ثم اختر الحرف",
+  write_t:"أكتب الحرف", write_s:"تتبّع الحرف بإصبعك على الشاشة",
+  learn_short:"تعلّم", match_short:"طابِق", listen_short:"استمع", write_short:"اكتب",
+  say_letter:"انطق الحرف", say_word:"الكلمة", slow:"ببطء",
+  match_h:"اضغط على حرف، ثم على صورته",
+  newround:"جولة جديدة", pairs_left:"أحسنت!",
+  listen_q:"أي حرف سمعت؟", listen_play:"استمع مرة أخرى",
+  write_h:"ارسم بإصبعك فوق الحرف المتقطّع", write_clear:"مسح", write_done:"أنهيت!",
+  win_t:"يا بطل! 🎉", win_msg:"لعبت جيداً — خذ قسطاً من الراحة ثم عُد",
+  again:"العب مرة أخرى",
+  p1:"اضغط على الملف لفتح اللعبة في أي متصفّح (تعمل بلا إنترنت). على التابلت تعمل باللمس بالكامل.",
+  p2:"الصوت يأتي من محرّك النطق في الجهاز؛ إن لم تسمع صوتاً فعليك تنزيل أصوات النظام في إعدادات الجهاز.",
+  p3:"ابدأ بوضع «أستكشف»، ثم «لعبة الأذن»، ثم «طابِق». لا تضغط زرّاً لسماع النطق مرة أخرى.",
+  p4:"لمعلّم الرياض: اطبع الحروف وعلّقها، وخصّص 10 دقائق يومياً للعبة أمام المجموعة.",
+  foot:"لعبة تعليمية للأطفال 3–5 سنوات • تعمل بلا إنترنت • بدون إعلانات",
+  great:["ممتاز!","أحسنت!","رائع!","يا ذكي!","Beautiful!"],
+  tryagain:["حاول مرة أخرى","لا بأس، أعد المحاولة"]
+ },
+ en:{
+  title:"ABC Adventure", tag:"Listen • Tap • Play — learn your English letters",
+  home:"Home",
+  learn_t:"Explore Letters", learn_s:"Tap any letter to hear its name, its sound and a word",
+  match_t:"Match Letters", match_s:"Link each letter to its picture",
+  listen_t:"Ear Game", listen_s:"Hear the letter sound, then find the letter",
+  write_t:"Trace Letters", write_s:"Trace the letter with your finger",
+  learn_short:"Learn", match_short:"Match", listen_short:"Listen", write_short:"Write",
+  say_letter:"Say the letter", say_word:"the word", slow:"Slow",
+  match_h:"Tap a letter, then tap its picture",
+  newround:"New round", pairs_left:"Nice!",
+  listen_q:"Which letter did you hear?", listen_play:"Play it again",
+  write_h:"Draw on top of the dotted letter", write_clear:"Erase", write_done:"All done!",
+  win_t:"You did it! 🎉", win_msg:"Great playing — take a break and come back",
+  again:"Play again",
+  p1:"Open this file in any browser (works offline). On a tablet it is fully touch-driven.",
+  p2:"Audio uses the speech voices built into your device; if you hear nothing, install the system voices in your device settings.",
+  p3:"Start with Explore, then the Ear Game, then Match. Tap a card any time to hear it again.",
+  p4:"For kindergarten teachers: print the letters on cards and give the class 10 minutes of game time daily.",
+  foot:"Learning game for ages 3–5 • offline • no ads",
+  great:["Great!","Well done!","Amazing!","Super!","Nicely done!"],
+  tryagain:["Try again","No problem, once more"]
+ }
+};
+
+/* ---------- 3) حالة اللعبة ---------- */
+let LANG = localStorage.getItem("abc_lang") || "ar";
+let SOUND = localStorage.getItem("abc_sound") !== "0";
+let stars = parseInt(localStorage.getItem("abc_stars") || "0", 10);
+let cur = 0;               // الحرف الحالي في وضع الاستكشاف
+let t = I18N.ar;           // قاموس النصوص الحالي
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const rnd = n => Math.floor(Math.random() * n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); const tmp = a[i]; a[i] = a[j]; a[j] = tmp; } return a; };
+const word = i => LETTERS[i].w.toLowerCase();
+
+/* ---------- 4) الصوت: مؤثرات + نطق ---------- */
+let ac = null;
+function audio(){ if (!ac) { const C = window.AudioContext || window.webkitAudioContext; if (C) ac = new C(); } return ac; }
+function tone(freq, dur, type, delay, gain){
+  const c = audio(); if (!c || !SOUND) return;
+  if (c.state === "suspended") c.resume();
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type || "sine"; o.frequency.value = freq;
+  const t0 = c.currentTime + (delay || 0);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gain || 0.16, t0 + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + dur + 0.05);
+}
+const sfx = {
+  tap:  () => tone(520, .09, "triangle", 0, .10),
+  good: () => { tone(660, .12, "sine", 0, .18); tone(880, .14, "sine", .10, .16); tone(1180, .18, "sine", .22, .13); },
+  bad:  () => { tone(220, .16, "sawtooth", 0, .09); tone(170, .2, "sawtooth", .1, .07); },
+  win:  () => [523, 659, 784, 1046].forEach((f, i) => tone(f, .26, "triangle", i * .13, .16))
+};
+let voices = [];
+function loadVoices(){ voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
+if (window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function voiceFor(lang){
+  const want = lang.slice(0, 2).toLowerCase();
+  const good = voices.filter(v => (v.lang || "").toLowerCase().slice(0, 2) === want);
+  if (!good.length) return null;
+  const pri = ["female", "zira", "samantha", "google", "natural", "enhanced"];
+  good.sort((a, b) => {
+    const s = v => { const k = (v.name || "").toLowerCase(); return pri.reduce((n, p) => n + (k.includes(p) ? 1 : 0), 0); };
+    return s(b) - s(a);
+  });
+  return good[0];
+}
+function speak(text, lang, rate){
+  if (!SOUND || !window.speechSynthesis) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang; const v = voiceFor(lang); if (v) u.voice = v;
+    u.rate = rate || 1; u.pitch = lang.startsWith("ar") ? 1.05 : 1.25;
+    speechSynthesis.speak(u);
+  } catch (e) { /* المتصفح لا يدعم النطق — اللعبة تعمل بدونه */ }
+}
+const sayLetter = (i, slow) => { const L = LETTERS[i]; speak(L.l + ".  " + word(i) + ".", "en-US", slow ? .55 : .95); };
+const saySound  = (i, slow) => { speak(LETTERS[i].s, "en-US", slow ? .45 : .8); };
+const sayAr     = txt => speak(txt, "ar-SA", .95);
+function praise(force){
+  if (force === "bad") { sfx.bad(); if (SOUND && LANG === "ar") sayAr("حاول مرة أخرى"); return; }
+  sfx.good();
+  if (SOUND) speak(pick(LANG === "ar" ? ["أحسنت", "ممتاز", "رائع", "يا ذكي"] : I18N.en.great), LANG === "ar" ? "ar-SA" : "en-US", 1);
+}
+
+/* ---------- 5) النجوم والاحتفال ---------- */
+function addStar(n){
+  stars += (n || 1);
+  $("#starCount").textContent = stars;
+  localStorage.setItem("abc_stars", String(stars));
+}
+function toast(msg){
+  const el = $("#toast"); el.textContent = msg; el.classList.add("show");
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("show"), 1100);
+}
+const CC = ["#ff6b6b", "#ffd23f", "#2ecc71", "#3d8bff", "#a55eea", "#ff9f43", "#22b8cf"];
+function confetti(count){
+  const box = $("#confetti");
+  for (let i = 0; i < (count || 60); i++) {
+    const d = document.createElement("i");
+    d.className = "cft";
+    d.style.left = rnd(100) + "vw";
+    d.style.top = (-10 - rnd(30)) + "px";
+    d.style.background = pick(CC);
+    d.style.animationDuration = (1.6 + Math.random() * 1.7) + "s";
+    d.style.animationDelay = (Math.random() * .5) + "s";
+    if (rnd(2)) d.style.borderRadius = "50%";
+    box.appendChild(d);
+    setTimeout(() => d.remove(), 4200);
+  }
+}
+function celebrate(msg){
+  confetti(80); sfx.win(); if (msg) toast(msg);
+}
+
+/* ---------- 6) التنقل واللغة ---------- */
+function go(name){
+  $$(".screen").forEach(s => s.classList.toggle("on", s.id === "s-" + name));
+  $$(".nb").forEach(b => b.classList.toggle("on", b.dataset.go === name));
+  if (name === "match") startMatch();
+  if (name === "listen") startListen();
+  if (name === "write") setupPad();
+  window.scrollTo(0, 0);
+}
+function applyLang(){
+  t = I18N[LANG];
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
+  $("#appTitle").textContent = t.title;
+  $("#tagline").innerHTML = t.tag;
+  $$("[data-t]").forEach(el => { const k = el.dataset.t; if (t[k]) el.textContent = t[k]; });
+  $("#langBtn").textContent = LANG === "ar" ? "EN" : "عربي";
+  $("#parentsTxt").innerHTML = "✅ " + t.p1 + "<br>🔊 " + t.p2 + "<br>🧭 " + t.p3 + "<br>🎓 " + t.p4;
+  $("#parentsTtl").textContent = LANG === "ar" ? "👨‍👩‍👧 للوالدين والمعلّم" : "👨‍👩‍👧 For parents & teachers";
+  $("#foot").textContent = t.foot;
+  document.title = (LANG === "ar" ? "مغامرة الحروف | ABC Adventure" : "ABC Adventure | مغامرة الحروف");
+  renderLearn(); renderMatch(); renderListen(); drawPad();
+}
+
+/* ---------- 7) شاشة الاستكشاف ---------- */
+function renderLearn(){
+  const g = $("#letterGrid");
+  g.innerHTML = LETTERS.map((L, i) =>
+    '<button class="tile' + (i === cur ? " sel" : "") + '" data-i="' + i + '" style="background:' + L.c + '">' +
+      '<div><div class="lt">' + L.l + '</div><div class="sm">' + L.l.toLowerCase() + '</div></div>' +
+    '</button>').join("");
+  $$("#letterGrid .tile").forEach(b => b.addEventListener("click", () => {
+    cur = +b.dataset.i; markSel(); showLetter(); sfx.tap(); sayLetter(cur);
+  }));
+  showLetter();
+}
+function markSel(){ $$("#letterGrid .tile").forEach(b => b.classList.toggle("sel", +b.dataset.i === cur)); }
+function step(d){ cur = (cur + d + LETTERS.length) % LETTERS.length; markSel(); showLetter(); }
+function showLetter(){
+  const L = LETTERS[cur];
+  const el = $("#lvLt"); el.style.color = L.c;
+  el.innerHTML = L.l + '<small>' + L.l.toLowerCase() + '</small>';
+  $("#lvPic").innerHTML = L.svg;
+  $("#lvWord").textContent = L.w;
+  $("#lvWord").lang = "en";
+  $("#lvAr").textContent = LANG === "ar" ? L.ar : word(cur);
+  $("#lvPhon").textContent = "🔉 " + L.s;
+  markSel();
+}
+
+/* ---------- 8) لعبة المطابقة ---------- */
+const MATCH_N = 3;
+let mState = { idx: [], sel: null, done: 0 };
+function startMatch(){
+  const set = shuffle(LETTERS.map((x, i) => i)).slice(0, MATCH_N).sort((a, b) => a - b);
+  mState = { idx: set, letters: shuffle(set), pics: shuffle(set), sel: null, done: 0 };
+  renderMatch();
+}
+function renderMatch(){
+  const w = $("#matchWrap"); if (!w) return;
+  if (!mState.idx.length) return;
+  const colA = (LANG === "ar" ? "pics" : "letters");
+  const letters = mState.letters.map(i => '<button class="pcard' + (mState.doneIdx && mState.doneIdx.indexOf(i) > -1 ? " done" : "") + '" data-k="L' + i + '" data-i="' + i + '"><span class="lt">' + LETTERS[i].l + '</span></button>');
+  const pics = mState.pics.map(i => '<button class="pcard' + (mState.doneIdx && mState.doneIdx.indexOf(i) > -1 ? " done" : "") + '" data-k="P' + i + '" data-i="' + i + '">' + LETTERS[i].svg + '</button>');
+  const first = colA === "pics" ? pics : letters, second = colA === "pics" ? letters : pics;
+  w.innerHTML = first.join("") + second.join("");
+  $$("#matchWrap .pcard").forEach(b => b.addEventListener("click", () => onMatchTap(b)));
+  if (!mState.doneIdx) mState.doneIdx = [];
+  $("#matchBar").style.width = (mState.done / MATCH_N * 100) + "%";
+}
+function onMatchTap(btn){
+  if (btn.classList.contains("done")) return;
+  sfx.tap();
+  const i = +btn.dataset.i, kind = btn.dataset.k[0];
+  if (!mState.sel) { mState.sel = { i: i, kind: kind, btn: btn }; btn.classList.add("pick"); return; }
+  if (mState.sel.btn === btn) { btn.classList.remove("pick"); mState.sel = null; return; }
+  const same = mState.sel.i === i && mState.sel.kind !== kind;
+  if (same) {
+    mState.sel.btn.classList.remove("pick");
+    mState.sel.btn.classList.add("done"); btn.classList.add("done");
+    mState.doneIdx.push(i); mState.done++;
+    addStar(1); praise(); speak(word(i), "en-US", 1);
+    $("#matchBar").style.width = (mState.done / MATCH_N * 100) + "%";
+    mState.sel = null;
+    if (mState.done >= MATCH_N) { addStar(2); setTimeout(() => celebrate(LANG === "ar" ? "طابقت كل الحروف! ⭐⭐" : "All matched! ⭐⭐"), 500); }
+  } else {
+    const a = mState.sel.btn;
+    a.classList.remove("pick"); btn.classList.add("bad"); a.classList.add("bad");
+    mState.sel = null;
+    praise("bad");
+    setTimeout(() => { btn.classList.remove("bad"); a.classList.remove("bad"); }, 450);
+  }
+}
+
+/* ---------- 9) لعبة الاستماع ---------- */
+const LISTEN_N = 6;
+let lState = { q: 0, right: 0, ans: 0 };
+function startListen(){ lState = { q: 0, right: 0, ans: 0 }; nextListen(); }
+function nextListen(){
+  if (lState.q >= LISTEN_N) {
+    showWin(lState.right);
+    return;
+  }
+  $("#listenBar").style.width = (lState.q / LISTEN_N * 100) + "%";
+  const ans = rnd(LETTERS.length);
+  const opts = shuffle([ans, (ans + 1 + rnd(24)) % 26, (ans + 9 + rnd(16)) % 26].filter((v, ix, a) => a.indexOf(v) === ix));
+  while (opts.length < 3) { const c = rnd(26); if (opts.indexOf(c) < 0 && c !== ans) opts.push(c); }
+  lState.ans = ans;
+  const box = $("#listenOpts");
+  box.innerHTML = shuffle(opts).map(i => '<button class="opt" data-i="' + i + '" style="background:' + LETTERS[i].c + '">' + LETTERS[i].l + '</button>').join("");
+  $$("#listenOpts .opt").forEach(b => b.addEventListener("click", () => onListen(b, +b.dataset.i === ans)));
+  setTimeout(() => saySound(ans), 380);
+}
+function onListen(btn, ok){
+  if (btn.disabled) return;
+  $$("#listenOpts .opt").forEach(b => b.disabled = true);
+  if (ok) {
+    btn.classList.add("good"); addStar(2); lState.right++; praise();
+    speak(LETTERS[lState.ans].l + ". " + word(lState.ans), "en-US", .95);
+    lState.q++;
+    setTimeout(() => { $$("#listenOpts .opt").forEach(b => b.disabled = false); nextListen(); }, 1250);
+  } else {
+    btn.classList.add("bad"); praise("bad");
+    setTimeout(() => { btn.classList.remove("bad"); $$("#listenOpts .opt").forEach(b => b.disabled = false); }, 900);
+  }
+}
+
+/* ---------- 10) التعيين على الشاشة (الكتابة بالإصبع) ---------- */
+let padInk = "#3d8bff";
+function setupPad(){
+  const c = $("#pad"); if (!c) return;
+  const box = c.parentElement.getBoundingClientRect();
+  const w = Math.max(240, Math.floor(box.width - 32));
+  const h = Math.min(w, 380);
+  const dpr = Math.min(3, window.devicePixelRatio || 1);
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.height = h + "px";
+  const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawPad();
+}
+function drawPad(){
+  const c = $("#pad"); if (!c || !c.getContext) return;
+  const g = c.getContext("2d");
+  const w = c.width / Math.min(3, window.devicePixelRatio || 1), h = c.height / Math.min(3, window.devicePixelRatio || 1);
+  g.clearRect(0, 0, w, h);
+  /* خطوط مساعدة */
+  g.strokeStyle = "#e3eef5"; g.lineWidth = 2;
+  [h * .5].forEach(y => { g.setLineDash([12, 10]); g.beginPath(); g.moveTo(10, y); g.lineTo(w - 10, y); g.stroke(); });
+  g.setLineDash([]);
+  /* الحرف الكبير */
+  const L = LETTERS[cur];
+  const fs = Math.min(h * .82, w * .6);
+  g.font = "900 " + fs + "px 'Comic Sans MS', 'Segoe UI', sans-serif";
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillStyle = "#f2f6f9"; g.fillText(L.l, w / 2, h / 2);
+  g.strokeStyle = "#c9dbe6"; g.lineWidth = 3; g.setLineDash([14, 11]);
+  g.strokeText(L.l, w / 2, h / 2); g.setLineDash([]);
+  g.font = "900 " + (fs * .22) + "px 'Comic Sans MS', sans-serif";
+  g.fillStyle = "#dfe9f0"; g.fillText(L.l.toLowerCase(), w * .16, h / 2);
+  g.fillText(L.l.toUpperCase(), w * .84, h / 2);
+  $("#wSayLabel") && ($("#wSayLabel").textContent = L.l);
+}
+function padEvents(){
+  const c = $("#pad"); let drawing = false;
+  const pos = e => {
+    const r = c.getBoundingClientRect();
+    const p = (e.touches && e.touches[0]) || e;
+    return { x: p.clientX - r.left, y: p.clientY - r.top };
+  };
+  const start = e => {
+    drawing = true; const g = c.getContext("2d"), p = pos(e);
+    g.strokeStyle = padInk; g.lineWidth = 16; g.lineCap = "round"; g.lineJoin = "round";
+    g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(p.x + .1, p.y + .1); g.stroke();
+    tone(700 + p.y, .05, "sine", 0, .05);
+    e.preventDefault();
+  };
+  const move = e => {
+    if (!drawing) return;
+    const g = c.getContext("2d"), p = pos(e);
+    g.lineTo(p.x, p.y); g.stroke(); e.preventDefault();
+  };
+  const end = () => { drawing = false; };
+  c.addEventListener("mousedown", start); c.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", end);
+  c.addEventListener("touchstart", start, { passive: false });
+  c.addEventListener("touchmove", move, { passive: false });
+  c.addEventListener("touchend", end);
+}
+
+/* ---------- 11) شاشة الفوز ---------- */
+function showWin(n){
+  $("#winStars").textContent = "⭐".repeat(Math.max(1, Math.min(5, n)));
+  $("#winMsg").textContent = (LANG === "ar" ? "أجبت على " + n + " من " + LISTEN_N + " أسئلة" : "You answered " + n + " of " + LISTEN_N) + " — " + t.win_msg;
+  $("#listenBar").style.width = "100%";
+  go("win"); celebrate();
+  speak(LANG === "ar" ? "أحسنت يا بطل" : "Great job, champion", LANG === "ar" ? "ar-SA" : "en-US", 1);
+}
+
+/* ---------- 12) ربط الأزرار ---------- */
+function bind(){
+  $$("[data-go]").forEach(b => b.addEventListener("click", () => { sfx.tap(); go(b.dataset.go); }));
+  $("#langBtn").addEventListener("click", () => { LANG = LANG === "ar" ? "en" : "ar"; localStorage.setItem("abc_lang", LANG); applyLang(); sfx.tap(); });
+  $("#soundBtn").addEventListener("click", () => {
+    SOUND = !SOUND; localStorage.setItem("abc_sound", SOUND ? "1" : "0");
+    $("#soundBtn").textContent = SOUND ? "🔊" : "🔇"; if (!SOUND && window.speechSynthesis) speechSynthesis.cancel();
+  });
+  $("#soundBtn").textContent = SOUND ? "🔊" : "🔇";
+  $("#sayBtn").addEventListener("click", () => sayLetter(cur));
+  $("#replayBtn").addEventListener("click", () => sayLetter(cur));
+  $("#slowBtn").addEventListener("click", () => { sayLetter(cur, true); });
+  $("#prevBtn").addEventListener("click", () => { sfx.tap(); step(LANG === "ar" ? 1 : -1); });
+  $("#nextBtn").addEventListener("click", () => { sfx.tap(); step(LANG === "ar" ? -1 : 1); });
+  $("#lvPic").addEventListener("click", () => sayLetter(cur));
+  $("#lvWord").addEventListener("click", () => sayLetter(cur));
+  $("#lvPhon").addEventListener("click", () => saySound(cur));
+  $("#matchNew").addEventListener("click", () => { sfx.tap(); startMatch(); });
+  $("#earBtn").addEventListener("click", () => saySound(lState.ans));
+  $("#earSlowBtn").addEventListener("click", () => saySound(lState.ans, true));
+  $("#listenNew").addEventListener("click", () => { sfx.tap(); startListen(); });
+  $("#wPrev").addEventListener("click", () => { sfx.tap(); step(-1); });
+  $("#wNext").addEventListener("click", () => { sfx.tap(); step(1); });
+  $("#wSay").addEventListener("click", () => sayLetter(cur));
+  $("#wClear").addEventListener("click", () => { setupPad(); sfx.tap(); });
+  $("#wDone").addEventListener("click", () => {
+    const c = $("#pad"); const g = c.getContext("2d");
+    const d = g.getImageData(0, 0, c.width, c.height).data; let ink = 0;
+    for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 40 && d[i] < 120 && d[i + 2] > 120) ink++;
+    if (ink > 600) { addStar(1); sfx.good(); sayLetter(cur); celebrate(LANG === "ar" ? "كتابة جميلة! ⭐" : "Lovely writing! ⭐"); step(1); }
+    else { toast(LANG === "ar" ? "ارسم الحرف أولاً ✏️" : "Trace the letter first ✏️"); sfx.tap(); }
+  });
+  $("#againBtn").addEventListener("click", () => { sfx.tap(); lState.q = 0; lState.right = 0; go("listen"); });
+  $("#homeBtn").addEventListener("click", () => { sfx.tap(); go("home"); });
+  padEvents();
+  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if ($("#s-write").classList.contains("on")) setupPad(); }, 200); });
+}
+
+/* ---------- 13) الإقلاع ---------- */
+$("#starCount").textContent = stars;
+bind(); applyLang(); renderLearn(); startMatch();
+/* أول نقرة تفعّل الصوت (سياسة المتصفحات) */
+document.addEventListener("pointerdown", function once(){ audio(); document.removeEventListener("pointerdown", once); }, { once: true });
+</script>
+</body>
+</html>

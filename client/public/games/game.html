@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Cyberpunk Bomberman 2088</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        body {
+            font-family: 'Tajawal', 'Orbitron', sans-serif;
+            background-color: #05060d;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .neon-border-cyan {
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
+            border: 2px solid #00f3ff;
+        }
+        .neon-text-magenta {
+            text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f;
+        }
+        .neon-text-cyan {
+            text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+        }
+        .neon-button {
+            background: linear-gradient(135deg, rgba(255,0,127,0.2), rgba(0,243,255,0.2));
+            transition: all 0.2s ease-in-out;
+        }
+        .neon-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 25px rgba(0,243,255,0.6);
+        }
+        .neon-button:active {
+            transform: translateY(1px);
+        }
+        canvas {
+            image-rendering: pixelated;
+            border-radius: 12px;
+        }
+        .touch-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(4px);
+        }
+        .touch-btn:active {
+            background: rgba(0, 243, 255, 0.4);
+        }
+    </style>
+<style>
+.site-return{position:fixed;z-index:99999;top:12px;left:14px;display:flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(14,30,40,.82);backdrop-filter:blur(10px);color:#fff;text-decoration:none;font:700 12px system-ui,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:.2s}
+.site-return:hover{background:#efbd86;color:#17212b;transform:translateY(-2px)}
+</style></head>
+<a class="site-return" href="/" aria-label="العودة إلى مختبر الإبداع الرقمي">↩ العودة للمختبر</a><body class="flex flex-col items-center justify-between min-h-screen bg-slate-950 text-white select-none p-2 md:p-4">
+
+    <!-- Top Header & HUD -->
+    <header class="w-full max-w-4xl flex items-center justify-between px-4 py-2 bg-slate-900/80 backdrop-blur-md rounded-xl neon-border-cyan mb-2">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-bomb text-cyan-400 text-2xl animate-pulse"></i>
+            <div>
+                <h1 class="font-black text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500 font-['Orbitron']">
+                    NEON BOMBERMAN
+                </h1>
+                <p class="text-xs text-slate-400 hidden sm:block">اصدار الأسطورة - 600 عام خبرة</p>
+            </div>
+        </div>
+
+        <!-- Live Scoreboard -->
+        <div class="flex items-center gap-4 text-xs md:text-sm font-bold">
+            <div class="flex items-center gap-1 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-pink-500/30">
+                <i class="fa-solid fa-heart text-pink-500"></i>
+                <span id="hud-lives" class="text-pink-400">3</span>
+            </div>
+            <div class="flex items-center gap-1 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-yellow-500/30">
+                <i class="fa-solid fa-trophy text-yellow-400"></i>
+                <span id="hud-score" class="text-yellow-400">0000</span>
+            </div>
+            <div class="flex items-center gap-1 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-cyan-500/30">
+                <i class="fa-solid fa-layer-group text-cyan-400"></i>
+                <span id="hud-level" class="text-cyan-400">المستوى 1</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Game Container & Canvas Frame -->
+    <main class="relative w-full max-w-4xl flex-1 flex flex-col items-center justify-center min-h-0">
+        <div id="canvas-wrapper" class="relative flex items-center justify-center w-full h-full p-1">
+            <canvas id="gameCanvas" class="shadow-2xl max-w-full max-h-full"></canvas>
+
+            <!-- Overlay Screen: Start / Game Over / Win -->
+            <div id="modal-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-lg flex flex-col items-center justify-center p-6 text-center rounded-xl z-20 transition-all duration-300">
+                <div class="max-w-md w-full bg-slate-900/90 p-8 rounded-2xl border border-cyan-500/40 shadow-2xl space-y-6">
+                    <div id="modal-icon" class="text-6xl text-cyan-400 animate-bounce">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h2 id="modal-title" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400">
+                        NEON BOMBERMAN 2088
+                    </h2>
+                    <p id="modal-msg" class="text-slate-300 text-sm leading-relaxed">
+                        اخترق الشبكة، ضع القنابل السايبرانية، ودمّر الأعداء للوصول إلى النواة!
+                    </p>
+
+                    <!-- Instructions Grid -->
+                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-400 bg-slate-950/60 p-3 rounded-lg border border-slate-800 text-right">
+                        <div><i class="fa-solid fa-keyboard text-cyan-400 ml-1"></i> الحركة: <b>الأسهم / WASD</b></div>
+                        <div><i class="fa-solid fa-space-shuttle text-pink-400 ml-1"></i> قنبلة: <b>المسطرة Space</b></div>
+                        <div><i class="fa-solid fa-bolt text-yellow-400 ml-1"></i> الجوائز: <b>نطاق، قنابل، سرعة</b></div>
+                        <div><i class="fa-solid fa-shield text-emerald-400 ml-1"></i> الهدف: <b>تصفية الأعداء</b></div>
+                    </div>
+
+                    <button id="btn-start" class="w-full py-4 text-lg font-bold rounded-xl neon-button text-cyan-300 border border-cyan-400/50 shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>ابدأ اللعب الآن</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Controls (Visible on Touch Devices) -->
+        <div id="mobile-controls" class="w-full max-w-lg mt-2 flex items-center justify-between px-4 pb-2 md:hidden">
+            <!-- D-Pad Grid -->
+            <div class="grid grid-cols-3 gap-1.5 w-36 h-36">
+                <div></div>
+                <button id="btn-up" class="touch-btn rounded-t-xl flex items-center justify-center text-cyan-400 text-xl"><i class="fa-solid fa-chevron-up"></i></button>
+                <div></div>
+                <button id="btn-left" class="touch-btn rounded-l-xl flex items-center justify-center text-cyan-400 text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="bg-slate-900/50 rounded-md"></div>
+                <button id="btn-right" class="touch-btn rounded-r-xl flex items-center justify-center text-cyan-400 text-xl"><i class="fa-solid fa-chevron-right"></i></button>
+                <div></div>
+                <button id="btn-down" class="touch-btn rounded-b-xl flex items-center justify-center text-cyan-400 text-xl"><i class="fa-solid fa-chevron-down"></i></button>
+                <div></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+                <button id="btn-bomb" class="w-20 h-20 rounded-full bg-gradient-to-tr from-pink-600 to-rose-400 border-2 border-pink-300 shadow-lg flex flex-col items-center justify-center active:scale-95 text-white">
+                    <i class="fa-solid fa-bomb text-2xl"></i>
+                    <span class="text-[10px] font-bold mt-1">قنبلة</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* Modern Web Audio Synthesizer for Retro SFX (Zero external files needed) */
+        class AudioEngine {
+            constructor() {
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+            playTone(freq, type, duration, vol = 0.1) {
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
+            }
+            playExplosion() {
+                if (!this.ctx) return;
+                try {
+                    const bufferSize = this.ctx.sampleRate * 0.4;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const whiteNoise = this.ctx.createBufferSource();
+                    whiteNoise.buffer = buffer;
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(800, this.ctx.currentTime);
+                    filter.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.4);
+
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+
+                    whiteNoise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    whiteNoise.start();
+                } catch(e) {}
+            }
+            sfxPlantBomb() {
+                this.playTone(300, 'sine', 0.15, 0.2);
+            }
+            sfxPowerup() {
+                this.playTone(523, 'triangle', 0.1, 0.2);
+                setTimeout(() => this.playTone(659, 'triangle', 0.1, 0.2), 80);
+                setTimeout(() => this.playTone(783, 'triangle', 0.15, 0.2), 160);
+            }
+            sfxHit() {
+                this.playTone(150, 'sawtooth', 0.3, 0.3);
+            }
+            sfxWin() {
+                [440, 554, 659, 880].forEach((freq, idx) => {
+                    setTimeout(() => this.playTone(freq, 'sine', 0.2, 0.2), idx * 120);
+                });
+            }
+        }
+
+        const audio = new AudioEngine();
+
+        // Game Grid Constants (15 cols x 11 rows)
+        const COLS = 15;
+        const ROWS = 11;
+        const TILE_SIZE = 48; // Base resolution per tile
+
+        const TILE_EMPTY = 0;
+        const TILE_WALL = 1;     // Indestructible Obsidian Block
+        const TILE_BRICK = 2;    // Destructible Cyber Block
+
+        const POWERUP_BOMB = 'bomb';
+        const POWERUP_FLAME = 'flame';
+        const POWERUP_SPEED = 'speed';
+        const POWERUP_SHIELD = 'shield';
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = COLS * TILE_SIZE;
+        canvas.height = ROWS * TILE_SIZE;
+
+        // State Machine
+        let gameState = 'START'; // START, PLAYING, WIN, GAMEOVER
+        let score = 0;
+        let level = 1;
+        let lives = 3;
+        let screenShake = 0;
+
+        // Entities arrays
+        let grid = [];
+        let player = null;
+        let enemies = [];
+        let bombs = [];
+        let explosions = [];
+        let powerups = [];
+        let particles = [];
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 6;
+                this.vy = (Math.random() - 0.5) * 6;
+                this.size = Math.random() * 6 + 2;
+                this.color = color;
+                this.alpha = 1;
+                this.life = Math.random() * 0.3 + 0.4;
+            }
+            update(dt) {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= dt / this.life;
+            }
+            draw(ctx) {
+                if (this.alpha <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class Player {
+            constructor() {
+                this.resetPosition();
+                this.maxBombs = 1;
+                this.flameRange = 1;
+                this.speed = 3.2; // Pixels per frame
+                this.invincibleTimer = 0;
+                this.hasShield = false;
+                this.radius = TILE_SIZE * 0.38;
+            }
+            resetPosition() {
+                this.x = 1.5 * TILE_SIZE;
+                this.y = 1.5 * TILE_SIZE;
+            }
+            getTile() {
+                return {
+                    col: Math.floor(this.x / TILE_SIZE),
+                    row: Math.floor(this.y / TILE_SIZE)
+                };
+            }
+            update(keys, dt) {
+                if (this.invincibleTimer > 0) this.invincibleTimer -= dt;
+
+                let dx = 0;
+                let dy = 0;
+
+                if (keys['ArrowUp'] || keys['KeyW']) dy -= 1;
+                if (keys['ArrowDown'] || keys['KeyS']) dy += 1;
+                if (keys['ArrowLeft'] || keys['KeyA']) dx -= 1;
+                if (keys['ArrowRight'] || keys['KeyD']) dx += 1;
+
+                // Normalize diagonal movement speed
+                if (dx !== 0 && dy !== 0) {
+                    dx *= 0.7071;
+                    dy *= 0.7071;
+                }
+
+                // Move with collision checking
+                this.moveAxis(dx * this.speed, 0);
+                this.moveAxis(0, dy * this.speed);
+            }
+
+            moveAxis(dx, dy) {
+                if (dx === 0 && dy === 0) return;
+                const newX = this.x + dx;
+                const newY = this.y + dy;
+
+                if (!this.checkCollision(newX, newY)) {
+                    this.x = newX;
+                    this.y = newY;
+                }
+            }
+
+            checkCollision(nx, ny) {
+                const r = this.radius - 2;
+                // Check 4 corners around player bounding circle
+                const points = [
+                    { x: nx - r, y: ny - r },
+                    { x: nx + r, y: ny - r },
+                    { x: nx - r, y: ny + r },
+                    { x: nx + r, y: ny + r }
+                ];
+
+                for (let p of points) {
+                    let col = Math.floor(p.x / TILE_SIZE);
+                    let row = Math.floor(p.y / TILE_SIZE);
+
+                    if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return true;
+
+                    let tile = grid[row][col];
+                    if (tile === TILE_WALL || tile === TILE_BRICK) return true;
+
+                    // Bomb collision (can pass through bomb if standing on it when placed)
+                    for (let b of bombs) {
+                        if (b.col === col && b.row === row) {
+                            let pTile = this.getTile();
+                            // If player was already inside bomb tile, allow walking out, else block
+                            if (pTile.col !== b.col || pTile.row !== b.row) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            draw(ctx) {
+                if (this.invincibleTimer > 0 && Math.floor(Date.now() / 100) % 2 === 0) return;
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // Shield visual
+                if (this.hasShield) {
+                    ctx.strokeStyle = '#00f3ff';
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = '#00f3ff';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius + 4, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Player Body (Cyberpunk Neon Orb/Helmet)
+                ctx.fillStyle = '#00f3ff';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#00f3ff';
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Helmet Visor
+                ctx.fillStyle = '#ff007f';
+                ctx.beginPath();
+                ctx.ellipse(3, -2, this.radius * 0.5, this.radius * 0.3, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        class Enemy {
+            constructor(col, row, type = 'basic') {
+                this.x = (col + 0.5) * TILE_SIZE;
+                this.y = (row + 0.5) * TILE_SIZE;
+                this.type = type; // basic, fast, ghost
+                this.speed = type === 'fast' ? 2.3 : 1.4;
+                this.dir = { x: 1, y: 0 };
+                this.changeDirTimer = 0;
+                this.radius = TILE_SIZE * 0.36;
+                this.color = type === 'fast' ? '#ffaa00' : (type === 'ghost' ? '#a855f7' : '#ff0055');
+            }
+            getTile() {
+                return {
+                    col: Math.floor(this.x / TILE_SIZE),
+                    row: Math.floor(this.y / TILE_SIZE)
+                };
+            }
+            update(dt) {
+                this.changeDirTimer -= dt;
+
+                let nextX = this.x + this.dir.x * this.speed;
+                let nextY = this.y + this.dir.y * this.speed;
+
+                if (this.checkCollision(nextX, nextY) || this.changeDirTimer <= 0) {
+                    this.chooseNewDirection();
+                    this.changeDirTimer = Math.random() * 2 + 1;
+                } else {
+                    this.x = nextX;
+                    this.y = nextY;
+                }
+            }
+            chooseNewDirection() {
+                const dirs = [{x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1}];
+                const validDirs = dirs.filter(d => !this.checkCollision(this.x + d.x * TILE_SIZE * 0.5, this.y + d.y * TILE_SIZE * 0.5));
+                if (validDirs.length > 0) {
+                    this.dir = validDirs[Math.floor(Math.random() * validDirs.length)];
+                } else {
+                    this.dir = { x: -this.dir.x, y: -this.dir.y };
+                }
+            }
+            checkCollision(nx, ny) {
+                let col = Math.floor(nx / TILE_SIZE);
+                let row = Math.floor(ny / TILE_SIZE);
+
+                if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return true;
+
+                let tile = grid[row][col];
+                if (tile === TILE_WALL) return true;
+                if (tile === TILE_BRICK && this.type !== 'ghost') return true;
+
+                // Avoid bombs
+                for (let b of bombs) {
+                    if (b.col === col && b.row === row) return true;
+                }
+                return false;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = this.color;
+
+                // Enemy Body (Cyber Drone Shape)
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Eye / Sensor
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(this.dir.x * 4, this.dir.y * 4, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        class Bomb {
+            constructor(col, row, range, owner) {
+                this.col = col;
+                this.row = row;
+                this.range = range;
+                this.owner = owner;
+                this.timer = 2.5; // seconds until explosion
+                this.pulse = 0;
+            }
+            update(dt) {
+                this.timer -= dt;
+                this.pulse += dt * 8;
+                // Fuse particle sparks
+                if (Math.random() < 0.6) {
+                    particles.push(new Particle((this.col + 0.5) * TILE_SIZE, (this.row + 0.2) * TILE_SIZE, '#ffaa00'));
+                }
+                return this.timer <= 0;
+            }
+            draw(ctx) {
+                let x = (this.col + 0.5) * TILE_SIZE;
+                let y = (this.row + 0.5) * TILE_SIZE;
+                let scale = 1 + Math.sin(this.pulse) * 0.08;
+
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.scale(scale, scale);
+
+                // Glowing bomb core
+                ctx.fillStyle = '#ff0055';
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = '#ff0055';
+                ctx.beginPath();
+                ctx.arc(0, 2, TILE_SIZE * 0.35, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Bomb cap & spark
+                ctx.fillStyle = '#ffee00';
+                ctx.fillRect(-3, -TILE_SIZE * 0.4, 6, 6);
+
+                ctx.restore();
+            }
+        }
+
+        class ExplosionCell {
+            constructor(col, row) {
+                this.col = col;
+                this.row = row;
+                this.life = 0.4; // duration in seconds
+            }
+            update(dt) {
+                this.life -= dt;
+                // Plasma particles
+                particles.push(new Particle(
+                    (this.col + Math.random()) * TILE_SIZE,
+                    (this.row + Math.random()) * TILE_SIZE,
+                    Math.random() > 0.5 ? '#ffaa00' : '#ff0055'
+                ));
+                return this.life <= 0;
+            }
+            draw(ctx) {
+                let x = this.col * TILE_SIZE;
+                let y = this.row * TILE_SIZE;
+
+                ctx.save();
+                ctx.fillStyle = '#ffcc00';
+                ctx.shadowBlur = 25;
+                ctx.shadowColor = '#ff0055';
+                ctx.fillRect(x + 2, y + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+                ctx.restore();
+            }
+        }
+
+        class Powerup {
+            constructor(col, row, type) {
+                this.col = col;
+                this.row = row;
+                this.type = type; // bomb, flame, speed, shield
+                this.bob = 0;
+            }
+            draw(ctx) {
+                this.bob += 0.05;
+                let x = (this.col + 0.5) * TILE_SIZE;
+                let y = (this.row + 0.5) * TILE_SIZE + Math.sin(this.bob) * 3;
+
+                ctx.save();
+                ctx.translate(x, y);
+
+                let color = '#ffffff';
+                let icon = '⚡';
+                if (this.type === POWERUP_BOMB) { color = '#ff007f'; icon = '💣'; }
+                else if (this.type === POWERUP_FLAME) { color = '#ffaa00'; icon = '🔥'; }
+                else if (this.type === POWERUP_SPEED) { color = '#00f3ff'; icon = '⚡'; }
+                else if (this.type === POWERUP_SHIELD) { color = '#a855f7'; icon = '🛡️'; }
+
+                ctx.fillStyle = color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = color;
+                ctx.beginPath();
+                ctx.arc(0, 0, TILE_SIZE * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(icon, 0, 0);
+
+                ctx.restore();
+            }
+        }
+
+        function initGrid() {
+            grid = [];
+            for (let r = 0; r < ROWS; r++) {
+                grid[r] = [];
+                for (let c = 0; c < COLS; c++) {
+                    // Outer border & Grid pillars
+                    if (r === 0 || r === ROWS - 1 || c === 0 || c === COLS - 1 || (r % 2 === 0 && c % 2 === 0)) {
+                        grid[r][c] = TILE_WALL;
+                    } else {
+                        // Keep player spawn area safe (top-left 3x3)
+                        if ((r <= 2 && c <= 2)) {
+                            grid[r][c] = TILE_EMPTY;
+                        } else {
+                            // 65% chance of destructible brick
+                            grid[r][c] = Math.random() < 0.65 ? TILE_BRICK : TILE_EMPTY;
+                        }
+                    }
+                }
+            }
+        }
+
+        function spawnEnemies() {
+            enemies = [];
+            let count = 2 + level; // Increase enemies per level
+            let attempts = 0;
+
+            while (enemies.length < count && attempts < 200) {
+                attempts++;
+                let c = Math.floor(Math.random() * (COLS - 2)) + 1;
+                let r = Math.floor(Math.random() * (ROWS - 2)) + 1;
+
+                // Don't spawn near player
+                if (c <= 3 && r <= 3) continue;
+
+                if (grid[r][c] === TILE_EMPTY) {
+                    let type = 'basic';
+                    if (level >= 2 && Math.random() < 0.3) type = 'fast';
+                    if (level >= 3 && Math.random() < 0.2) type = 'ghost';
+                    enemies.push(new Enemy(c, r, type));
+                }
+            }
+        }
+
+        function startNewGame() {
+            score = 0;
+            level = 1;
+            lives = 3;
+            startLevel();
+        }
+
+        function startLevel() {
+            initGrid();
+            player = new Player();
+            spawnEnemies();
+            bombs = [];
+            explosions = [];
+            powerups = [];
+            particles = [];
+            gameState = 'PLAYING';
+            updateHUD();
+            document.getElementById('modal-overlay').classList.add('hidden');
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-lives').innerText = lives;
+            document.getElementById('hud-score').innerText = String(score).padStart(4, '0');
+            document.getElementById('hud-level').innerText = `المستوى ${level}`;
+        }
+
+        const keys = {};
+
+        window.addEventListener('keydown', e => {
+            audio.init();
+            keys[e.code] = true;
+            if (e.code === 'Space' && gameState === 'PLAYING') {
+                tryPlaceBomb();
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            keys[e.code] = false;
+        });
+
+        function tryPlaceBomb() {
+            if (!player || gameState !== 'PLAYING') return;
+
+            let tile = player.getTile();
+            // Check current active bombs placed by player
+            let activeBombs = bombs.filter(b => b.owner === player).length;
+            if (activeBombs >= player.maxBombs) return;
+
+            // Check if a bomb already exists on this tile
+            if (bombs.some(b => b.col === tile.col && b.row === tile.row)) return;
+
+            bombs.push(new Bomb(tile.col, tile.row, player.flameRange, player));
+            audio.sfxPlantBomb();
+        }
+
+        // Mobile Touch D-Pad Binding
+        const bindTouchBtn = (id, code) => {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); audio.init(); keys[code] = true; });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[code] = false; });
+        };
+
+        bindTouchBtn('btn-up', 'ArrowUp');
+        bindTouchBtn('btn-down', 'ArrowDown');
+        bindTouchBtn('btn-left', 'ArrowLeft');
+        bindTouchBtn('btn-right', 'ArrowRight');
+
+        document.getElementById('btn-bomb').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            audio.init();
+            tryPlaceBomb();
+        });
+
+        document.getElementById('btn-start').addEventListener('click', () => {
+            audio.init();
+            if (gameState === 'GAMEOVER' || gameState === 'WIN_ALL') {
+                startNewGame();
+            } else if (gameState === 'LEVEL_WIN') {
+                level++;
+                startLevel();
+            } else {
+                startNewGame();
+            }
+        });
+
+        function triggerExplosion(bomb) {
+            audio.playExplosion();
+            screenShake = 12; // Camera shake intensity
+
+            let blastTiles = [{ col: bomb.col, row: bomb.row }];
+            const dirs = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
+
+            dirs.forEach(d => {
+                for (let i = 1; i <= bomb.range; i++) {
+                    let c = bomb.col + d.x * i;
+                    let r = bomb.row + d.y * i;
+
+                    if (c < 0 || c >= COLS || r < 0 || r >= ROWS) break;
+
+                    let tile = grid[r][c];
+
+                    if (tile === TILE_WALL) {
+                        break; // Blocked by wall
+                    }
+
+                    blastTiles.push({ col: c, row: r });
+
+                    if (tile === TILE_BRICK) {
+                        grid[r][c] = TILE_EMPTY; // Destroy brick
+                        score += 10;
+
+                        // Spawn powerup chance (25%)
+                        if (Math.random() < 0.25) {
+                            let types = [POWERUP_BOMB, POWERUP_FLAME, POWERUP_SPEED, POWERUP_SHIELD];
+                            let pType = types[Math.floor(Math.random() * types.length)];
+                            powerups.push(new Powerup(c, r, pType));
+                        }
+                        break; // Stop blast ray after destroying brick
+                    }
+
+                    // Chain reaction: explode other bombs immediately
+                    let otherBomb = bombs.find(b => b.col === c && b.row === r);
+                    if (otherBomb) {
+                        otherBomb.timer = 0;
+                    }
+                }
+            });
+
+            // Create explosion cell objects
+            blastTiles.forEach(bt => {
+                explosions.push(new ExplosionCell(bt.col, bt.row));
+            });
+
+            updateHUD();
+        }
+
+        let lastTime = performance.now();
+
+        function updateGame(now) {
+            let dt = (now - lastTime) / 1000;
+            if (dt > 0.1) dt = 0.1; // Cap dt on tab switches
+            lastTime = now;
+
+            if (gameState !== 'PLAYING') return;
+
+            // 1. Update Player
+            player.update(keys, dt);
+            let pTile = player.getTile();
+
+            // 2. Update Bombs
+            for (let i = bombs.length - 1; i >= 0; i--) {
+                if (bombs[i].update(dt)) {
+                    let b = bombs[i];
+                    bombs.splice(i, 1);
+                    triggerExplosion(b);
+                }
+            }
+
+            // 3. Update Explosions & Damage
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                let ex = explosions[i];
+
+                // Damage Player
+                if (pTile.col === ex.col && pTile.row === ex.row && player.invincibleTimer <= 0) {
+                    if (player.hasShield) {
+                        player.hasShield = false;
+                        player.invincibleTimer = 1.5;
+                        audio.sfxHit();
+                    } else {
+                        lives--;
+                        audio.sfxHit();
+                        updateHUD();
+                        if (lives <= 0) {
+                            gameOver();
+                        } else {
+                            player.resetPosition();
+                            player.invincibleTimer = 2.0;
+                        }
+                    }
+                }
+
+                // Destroy Enemies
+                for (let eIdx = enemies.length - 1; eIdx >= 0; eIdx--) {
+                    let en = enemies[eIdx];
+                    let eTile = en.getTile();
+                    if (eTile.col === ex.col && eTile.row === ex.row) {
+                        // Spawn death particles
+                        for (let p = 0; p < 15; p++) {
+                            particles.push(new Particle(en.x, en.y, en.color));
+                        }
+                        enemies.splice(eIdx, 1);
+                        score += 100;
+                        updateHUD();
+                    }
+                }
+
+                if (ex.update(dt)) {
+                    explosions.splice(i, 1);
+                }
+            }
+
+            // 4. Update Enemies
+            enemies.forEach(en => {
+                en.update(dt);
+                // Touch player collision
+                let dist = Math.hypot(en.x - player.x, en.y - player.y);
+                if (dist < (en.radius + player.radius) && player.invincibleTimer <= 0) {
+                    if (player.hasShield) {
+                        player.hasShield = false;
+                        player.invincibleTimer = 1.5;
+                        audio.sfxHit();
+                    } else {
+                        lives--;
+                        audio.sfxHit();
+                        updateHUD();
+                        if (lives <= 0) {
+                            gameOver();
+                        } else {
+                            player.resetPosition();
+                            player.invincibleTimer = 2.0;
+                        }
+                    }
+                }
+            });
+
+            // Check Level Victory
+            if (enemies.length === 0) {
+                levelWin();
+            }
+
+            // 5. Powerups Pickup
+            for (let i = powerups.length - 1; i >= 0; i--) {
+                let pu = powerups[i];
+                if (pTile.col === pu.col && pTile.row === pu.row) {
+                    if (pu.type === POWERUP_BOMB) player.maxBombs++;
+                    else if (pu.type === POWERUP_FLAME) player.flameRange++;
+                    else if (pu.type === POWERUP_SPEED) player.speed = Math.min(player.speed + 0.6, 5.5);
+                    else if (pu.type === POWERUP_SHIELD) player.hasShield = true;
+
+                    audio.sfxPowerup();
+                    score += 50;
+                    updateHUD();
+                    powerups.splice(i, 1);
+                }
+            }
+
+            // 6. Update Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update(dt);
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+
+            // Screen Shake decay
+            if (screenShake > 0) screenShake -= dt * 30;
+        }
+
+        function gameOver() {
+            gameState = 'GAMEOVER';
+            showModal('خسارة السايبورغ!', 'تم تدميرك بواسطة النواة! حاول مرة أخرى.', 'fa-skull-crossbones', 'text-pink-500');
+        }
+
+        function levelWin() {
+            gameState = 'LEVEL_WIN';
+            audio.sfxWin();
+            showModal(`أحسنت! أكملت المستوى ${level}`, 'تم تطهير القطاع بالكامل. جاهز للمستوى التالي؟', 'fa-award', 'text-yellow-400');
+        }
+
+        function showModal(title, msg, iconClass, iconColor) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = msg;
+            document.getElementById('modal-icon').className = `text-6xl ${iconColor} animate-bounce`;
+            document.getElementById('modal-icon').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            document.getElementById('modal-overlay').classList.remove('hidden');
+        }
+
+        function render() {
+            ctx.save();
+
+            // Apply camera shake effect
+            if (screenShake > 0) {
+                let rx = (Math.random() - 0.5) * screenShake;
+                let ry = (Math.random() - 0.5) * screenShake;
+                ctx.translate(rx, ry);
+            }
+
+            // Clear Background
+            ctx.fillStyle = '#05060d';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Grid Cells safely
+            if (grid && grid.length === ROWS) {
+                for (let r = 0; r < ROWS; r++) {
+                    if (!grid[r]) continue;
+                    for (let c = 0; c < COLS; c++) {
+                        let x = c * TILE_SIZE;
+                        let y = r * TILE_SIZE;
+                        let tile = grid[r][c];
+
+                        if (tile === TILE_WALL) {
+                            // Indestructible Titanium Pillar
+                            ctx.fillStyle = '#0f172a';
+                            ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                            ctx.strokeStyle = '#00f3ff';
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(x + 2, y + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+                        } else if (tile === TILE_BRICK) {
+                            // Cyber Crate
+                            ctx.fillStyle = '#1e1b4b';
+                            ctx.fillRect(x + 1, y + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                            ctx.strokeStyle = '#ff007f';
+                            ctx.lineWidth = 1.5;
+                            ctx.strokeRect(x + 4, y + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+                        } else {
+                            // Floor Grid lines
+                            ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+                            ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+                        }
+                    }
+                }
+            }
+
+            // Draw Powerups
+            powerups.forEach(pu => pu.draw(ctx));
+
+            // Draw Bombs
+            bombs.forEach(b => b.draw(ctx));
+
+            // Draw Explosions
+            explosions.forEach(ex => ex.draw(ctx));
+
+            // Draw Enemies
+            enemies.forEach(en => en.draw(ctx));
+
+            // Draw Player
+            if (player) player.draw(ctx);
+
+            // Draw Particles
+            particles.forEach(p => p.draw(ctx));
+
+            ctx.restore();
+        }
+
+        // Main Animation Frame Loop
+        function gameLoop(now) {
+            updateGame(now);
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initial setup for background grid before game start
+        initGrid();
+
+        // Start Loop
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>

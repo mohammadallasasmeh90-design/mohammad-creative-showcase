@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر علوم وفيزياء النجارة التفاعلي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .wood-card { background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #334155; }
+        .tab-btn.active { background-color: #d97706; color: #ffffff; border-color: #f59e0b; }
+        input[type=range] { direction: ltr; }
+        canvas { background-color: #020617; border: 1px solid #1e293b; border-radius: 0.75rem; }
+    </style>
+<style>
+.site-return{position:fixed;z-index:99999;top:12px;left:14px;display:flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(14,30,40,.82);backdrop-filter:blur(10px);color:#fff;text-decoration:none;font:700 12px system-ui,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:.2s}
+.site-return:hover{background:#efbd86;color:#17212b;transform:translateY(-2px)}
+</style></head>
+<a class="site-return" href="/" aria-label="العودة إلى مختبر الإبداع الرقمي">↩ العودة للمختبر</a><body class="min-h-screen p-4 md:p-8 flex flex-col items-center justify-between">
+
+    <!-- Header -->
+    <header class="w-full max-w-6xl text-center mb-6">
+        <div class="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-1.5 rounded-full text-sm font-semibold mb-3">
+            <span>🔬 منصة التعليم العلمي والفيزيائي للنجارين</span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-black text-amber-500 tracking-tight">مختبر علوم النجارة التفاعلي 🪵</h1>
+        <p class="text-slate-400 mt-2 text-sm md:text-base max-w-2xl mx-auto">
+            تجارب فيزيائية تفاعلية لمساعدة الطلاب والمهنيين على فهم ميكانيكا الخشب، اتجاه الألياف، سلوك الرطوبة، وقوة وصلات النجارة.
+        </p>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <div class="w-full max-w-6xl flex flex-wrap justify-center gap-2 mb-6">
+        <button id="tab-1-btn" class="tab-btn active px-5 py-3 rounded-xl font-bold border border-slate-700 bg-slate-800 hover:bg-slate-700 transition flex items-center gap-2" onclick="switchTab(1)">
+            <span>⚖️</span> 1. مرونة الخشب واختبار الحمل
+        </button>
+        <button id="tab-2-btn" class="tab-btn px-5 py-3 rounded-xl font-bold border border-slate-700 bg-slate-800 hover:bg-slate-700 transition flex items-center gap-2" onclick="switchTab(2)">
+            <span>💧</span> 2. الرطوبة وتشوه الألواح
+        </button>
+        <button id="tab-3-btn" class="tab-btn px-5 py-3 rounded-xl font-bold border border-slate-700 bg-slate-800 hover:bg-slate-700 transition flex items-center gap-2" onclick="switchTab(3)">
+            <span>🧩</span> 3. اختبار قوة وصلات النجارة
+        </button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+
+        <!-- EXPERIMENT 1: BEAM FLEX & GRAIN STRENGTH -->
+        <div id="exp-1" class="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Controls Sidebar -->
+            <div class="lg:col-span-4 wood-card p-6 rounded-2xl flex flex-col justify-between space-y-4">
+                <h3 class="text-xl font-bold text-amber-400 border-b border-slate-700 pb-2">متغيرات التجربة</h3>
+
+                <!-- Wood Specie -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">اختر خامة الخشب:</label>
+                    <select id="exp1-wood" onchange="updateExp1()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white font-semibold focus:ring-2 focus:ring-amber-500 outline-none">
+                        <option value="balsa">بلسا Balsa (ضعيف جداً ومرن)</option>
+                        <option value="pine" selected>صنوبر سويدي Pine (لين متوازن)</option>
+                        <option value="oak">بلوط أبيض Oak (صلب وكثيف)</option>
+                        <option value="walnut">جوز أمريكي Walnut (صلابة ممتازة)</option>
+                    </select>
+                </div>
+
+                <!-- Grain Orientation -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">اتجاه الألياف (التعريق):</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="exp1-grain-h" onclick="setExp1Grain('h')" class="py-2 rounded-lg bg-amber-600 text-white font-bold border border-amber-500 text-xs md:text-sm">موازي (طولي)</button>
+                        <button id="exp1-grain-v" onclick="setExp1Grain('v')" class="py-2 rounded-lg bg-slate-800 text-slate-300 font-bold border border-slate-700 text-xs md:text-sm">عمودي (عرضي)</button>
+                    </div>
+                </div>
+
+                <!-- Moisture level slider -->
+                <div>
+                    <div class="flex justify-between text-sm font-semibold mb-1">
+                        <span class="text-slate-300">نسبة الرطوبة (Moisture Content):</span>
+                        <span id="exp1-moisture-val" class="text-amber-400 font-bold">12%</span>
+                    </div>
+                    <input type="range" id="exp1-moisture" min="5" max="30" value="12" oninput="updateExp1()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                </div>
+
+                <!-- Load Slider -->
+                <div>
+                    <div class="flex justify-between text-sm font-semibold mb-1">
+                        <span class="text-slate-300">الوزن المطبق (Force Load):</span>
+                        <span id="exp1-weight-val" class="text-red-400 font-bold">0 كجم</span>
+                    </div>
+                    <input type="range" id="exp1-weight" min="0" max="1500" value="0" step="10" oninput="updateExp1()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500">
+                </div>
+
+                <!-- Sound Effects Toggle & Reset -->
+                <div class="flex gap-2 pt-2">
+                    <button onclick="resetExp1()" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold transition">إعادة ضبط 🔄</button>
+                </div>
+            </div>
+
+            <!-- Simulation Canvas & Output -->
+            <div class="lg:col-span-8 flex flex-col space-y-4">
+                <div class="wood-card p-4 rounded-2xl relative">
+                    <canvas id="canvas1" width="750" height="320" class="w-full h-auto"></canvas>
+                    <div id="exp1-status" class="absolute top-6 right-6 bg-slate-900/90 border border-slate-700 px-4 py-2 rounded-lg font-bold text-sm text-slate-200">
+                        الحالة: الخشب متزن مستقر
+                    </div>
+                </div>
+                <div class="wood-card p-5 rounded-2xl border-l-4 border-amber-500">
+                    <h4 class="font-bold text-amber-400 text-base mb-1">💡 الشرح العلمي الفيزيائي للطالب:</h4>
+                    <p id="exp1-explanation" class="text-slate-300 text-sm leading-relaxed">
+                        جاري تحميل البيانات العلمية...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPERIMENT 2: MOISTURE & DISTORTION -->
+        <div id="exp-2" class="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
+            <div class="lg:col-span-4 wood-card p-6 rounded-2xl flex flex-col justify-between space-y-4">
+                <h3 class="text-xl font-bold text-amber-400 border-b border-slate-700 pb-2">تحكم الرطوبة واتجاه القطع</h3>
+
+                <!-- Log Cut Type -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">طريقة نشر وتفصيل اللوح (Sawing Method):</label>
+                    <select id="exp2-cut" onchange="updateExp2()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white font-semibold outline-none">
+                        <option value="plain">قص مماسي (Plain Sawn / Flat) - الأكثر انكماشاً وتحدباً</option>
+                        <option value="quarter">قص شعاعي (Quarter Sawn) - الأحدث والأكثر استقراراً</option>
+                    </select>
+                </div>
+
+                <!-- Humidity slider -->
+                <div>
+                    <div class="flex justify-between text-sm font-semibold mb-1">
+                        <span class="text-slate-300">رطوبة البيئة المحيطة (Relative Humidity):</span>
+                        <span id="exp2-rh-val" class="text-cyan-400 font-bold">50%</span>
+                    </div>
+                    <input type="range" id="exp2-rh" min="10" max="95" value="50" oninput="updateExp2()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                </div>
+
+                <div class="p-3 bg-slate-900/70 border border-slate-800 rounded-xl space-y-2 text-xs text-slate-400">
+                    <div class="flex justify-between"><span>نسبة انكماش الألياف المماسية:</span> <span class="font-bold text-amber-400">~8%</span></div>
+                    <div class="flex justify-between"><span>نسبة انكماش الألياف الشعاعية:</span> <span class="font-bold text-emerald-400">~4%</span></div>
+                    <div class="flex justify-between"><span>نسبة انكماش الألياف الطولية:</span> <span class="font-bold text-slate-400">~0.1%</span></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 flex flex-col space-y-4">
+                <div class="wood-card p-4 rounded-2xl relative">
+                    <canvas id="canvas2" width="750" height="320" class="w-full h-auto"></canvas>
+                </div>
+                <div class="wood-card p-5 rounded-2xl border-l-4 border-cyan-500">
+                    <h4 class="font-bold text-cyan-400 text-base mb-1">📐 الظاهرة العلمية (التحدب Cupping والالتواء):</h4>
+                    <p id="exp2-explanation" class="text-slate-300 text-sm leading-relaxed">
+                        الخشب مادة شرهة للماء (Hygroscopic). يتمدد وينكمش بنسب غير متساوية في الاتجاهات الثلاثة: المماسي (Tangential) ضعف الشعاعي (Radial)، بينما الانكماش الطولي مهمل تقريباً.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPERIMENT 3: JOINERY STRENGTH TEST -->
+        <div id="exp-3" class="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
+            <div class="lg:col-span-4 wood-card p-6 rounded-2xl flex flex-col justify-between space-y-4">
+                <h3 class="text-xl font-bold text-amber-400 border-b border-slate-700 pb-2">إعداد اختبار الوصلة</h3>
+
+                <!-- Joint Type Selection -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">اختر نوع الوصلة (Wood Joint):</label>
+                    <select id="exp3-joint" onchange="updateExp3()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white font-semibold outline-none">
+                        <option value="butt">وصلة تناطحية بسيطة (Butt Joint)</option>
+                        <option value="dowel">وصلة بالكوايل (Dowel Joint)</option>
+                        <option value="pocket">وصلة البراغي الجيبية (Pocket Hole)</option>
+                        <option value="mortise">وصلة النقر واللسان (Mortise & Tenon)</option>
+                        <option value="dovetail">وصلة ذيل السنونو (Dovetail Joint)</option>
+                    </select>
+                </div>
+
+                <!-- Glue Type -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">مادة التثبيت (Adhesive / Glue):</label>
+                    <select id="exp3-glue" onchange="updateExp3()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white font-semibold outline-none">
+                        <option value="none">بدون غراء (ميكانيكي فقط)</option>
+                        <option value="pva" selected>غراء خشب خشب أصفر (PVA Wood Glue)</option>
+                        <option value="epoxy">غراء إيبوكسي (Epoxy Structural)</option>
+                    </select>
+                </div>
+
+                <!-- Tension Test Button -->
+                <button id="exp3-test-btn" onclick="startTensileTest()" class="w-full py-3.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-extrabold rounded-xl shadow-lg transition flex justify-center items-center gap-2">
+                    <span>💥</span> ابدأ اختبار قوة الشد والقص
+                </button>
+            </div>
+
+            <div class="lg:col-span-8 flex flex-col space-y-4">
+                <div class="wood-card p-4 rounded-2xl relative">
+                    <canvas id="canvas3" width="750" height="320" class="w-full h-auto"></canvas>
+                    <div id="exp3-breakdown" class="absolute top-6 left-6 bg-slate-900/90 border border-slate-700 px-4 py-2 rounded-lg font-bold text-sm text-emerald-400">
+                        قوة التحمل القصوى: -- كجم
+                    </div>
+                </div>
+                <div class="wood-card p-5 rounded-2xl border-l-4 border-red-500">
+                    <h4 class="font-bold text-red-400 text-base mb-1">🛠️ تقييم هندسي للوصلة:</h4>
+                    <p id="exp3-explanation" class="text-slate-300 text-sm leading-relaxed">
+                        اختر الوصلة ونوع الغراء ثم اضغط "ابدأ اختبار قوة الشد" لرؤية توزيع الإجهاد والانهيار الهيكلي.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-xs text-slate-500">
+        مختبر علوم النجارة التعليمي النسخة 2.0 • مصمم بالكامل للتدريس والتدريب التطبيقي
+    </footer>
+
+    <script>
+        // Web Audio API Sound Effects Synthesizer
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playCreakSound() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(60 + Math.random() * 40, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch (e) {}
+        }
+
+        function playBreakSound() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                let bufferSize = audioCtx.sampleRate * 0.3;
+                let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                let output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+                let whiteNoise = audioCtx.createBufferSource();
+                whiteNoise.buffer = buffer;
+                let filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                let gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                whiteNoise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                whiteNoise.start();
+            } catch (e) {}
+        }
+
+        const woodSpecies = {
+            balsa: { name: "بلسا Balsa", color: "#F5E6CA", darkColor: "#D8C4A0", maxLoadH: 150, maxLoadV: 35, flex: 0.15 },
+            pine: { name: "صنوبر سويدي Pine", color: "#EED9B3", darkColor: "#CBB084", maxLoadH: 600, maxLoadV: 150, flex: 0.05 },
+            oak: { name: "بلوط أبيض Oak", color: "#9E6B42", darkColor: "#6E4423", maxLoadH: 1200, maxLoadV: 350, flex: 0.02 },
+            walnut: { name: "جوز أمريكي Walnut", color: "#5C3D2E", darkColor: "#3D2517", maxLoadH: 1400, maxLoadV: 400, flex: 0.018 }
+        };
+
+        const joineryData = {
+            butt: { name: "وصلة تناطحية Butt Joint", baseMax: 100, glueFactor: 1.5, desc: "أضعف الوصلات على الإطلاق لأن الغراء يتم امتصاصه داخل مسام الألياف الطولية (End Grain) دون تماسك حقيقي." },
+            dowel: { name: "وصلة بالكوايل Dowel Joint", baseMax: 450, glueFactor: 2.2, desc: "وصلة قوية يعتمد فيها التماسك على المساحة السطحية لأعواد الكوايل الخشبية والغراء." },
+            pocket: { name: "وصلة البراغي الجيبية Pocket Hole", baseMax: 550, glueFactor: 1.4, desc: "وصلة ميكانيكية سريعة تعتمد على ضغط البراغي، ممتازة للتجميع السريع ولكنها أضعف من النقر واللسان." },
+            mortise: { name: "وصلة النقر واللسان Mortise & Tenon", baseMax: 950, glueFactor: 2.8, desc: "الملكة المتوجة لوصلات الأثاث. توفر مساحة تلامس هائلة للألياف الجانبية مع قفل ميكانيكي قوي." },
+            dovetail: { name: "وصلة ذيل السنونو Dovetail Joint", baseMax: 1250, glueFactor: 2.5, desc: "أقوى الوصلات لمقاومة إجهاد الشد والخلع بفضل هندسة الذيل المائل القافل ذاتياً." }
+        };
+
+        let currentTab = 1;
+        let exp1State = { wood: 'pine', grain: 'h', moisture: 12, weight: 0, isBroken: false };
+        let exp2State = { cut: 'plain', rh: 50 };
+        let exp3State = { joint: 'butt', glue: 'pva', currentLoad: 0, isTesting: false, broken: false };
+
+        function switchTab(tabNum) {
+            currentTab = tabNum;
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', (idx + 1) === tabNum);
+            });
+            document.getElementById('exp-1').classList.toggle('hidden', tabNum !== 1);
+            document.getElementById('exp-2').classList.toggle('hidden', tabNum !== 2);
+            document.getElementById('exp-3').classList.toggle('hidden', tabNum !== 3);
+
+            if (tabNum === 1) updateExp1();
+            if (tabNum === 2) updateExp2();
+            if (tabNum === 3) updateExp3();
+        }
+
+        function setExp1Grain(dir) {
+            exp1State.grain = dir;
+            document.getElementById('exp1-grain-h').className = dir === 'h' ? 'py-2 rounded-lg bg-amber-600 text-white font-bold border border-amber-500 text-xs md:text-sm' : 'py-2 rounded-lg bg-slate-800 text-slate-300 font-bold border border-slate-700 text-xs md:text-sm';
+            document.getElementById('exp1-grain-v').className = dir === 'v' ? 'py-2 rounded-lg bg-amber-600 text-white font-bold border border-amber-500 text-xs md:text-sm' : 'py-2 rounded-lg bg-slate-800 text-slate-300 font-bold border border-slate-700 text-xs md:text-sm';
+            updateExp1();
+        }
+
+        function resetExp1() {
+            exp1State.weight = 0;
+            exp1State.isBroken = false;
+            document.getElementById('exp1-weight').value = 0;
+            updateExp1();
+        }
+
+        function updateExp1() {
+            exp1State.wood = document.getElementById('exp1-wood').value;
+            exp1State.moisture = parseInt(document.getElementById('exp1-moisture').value);
+            exp1State.weight = parseInt(document.getElementById('exp1-weight').value);
+
+            document.getElementById('exp1-moisture-val').innerText = exp1State.moisture + '%';
+            document.getElementById('exp1-weight-val').innerText = exp1State.weight + ' كجم';
+
+            const wood = woodSpecies[exp1State.wood];
+            // Moisture effect: High moisture increases flex but lowers ultimate breaking strength
+            const moistureFactor = 1 + (exp1State.moisture - 12) * 0.015;
+            let maxCapacity = (exp1State.grain === 'h' ? wood.maxLoadH : wood.maxLoadV) / moistureFactor;
+
+            if (exp1State.weight > maxCapacity && !exp1State.isBroken) {
+                exp1State.isBroken = true;
+                playBreakSound();
+            } else if (exp1State.weight > 0 && exp1State.weight <= maxCapacity) {
+                if (Math.random() < 0.2) playCreakSound();
+            }
+
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const startX = 100, endX = 650, baseY = 160, beamH = 35;
+            let flexAmount = 0;
+
+            if (!exp1State.isBroken) {
+                flexAmount = exp1State.weight * wood.flex * (exp1State.grain === 'v' ? 2.5 : 1) * (exp1State.moisture / 12);
+            } else {
+                flexAmount = 70;
+            }
+
+            // Draw Supports
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.moveTo(startX - 25, baseY + beamH); ctx.lineTo(startX + 25, baseY + beamH); ctx.lineTo(startX, baseY + beamH + 60); ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(endX - 25, baseY + beamH); ctx.lineTo(endX + 25, baseY + beamH); ctx.lineTo(endX, baseY + beamH + 60); ctx.fill();
+
+            // Draw Beam
+            const midX = (startX + endX) / 2;
+            if (!exp1State.isBroken) {
+                ctx.beginPath();
+                ctx.moveTo(startX, baseY);
+                ctx.quadraticCurveTo(midX, baseY + flexAmount * 2, endX, baseY);
+                ctx.lineTo(endX, baseY + beamH);
+                ctx.quadraticCurveTo(midX, baseY + beamH + flexAmount * 2, startX, baseY + beamH);
+                ctx.closePath();
+
+                // Dynamic Stress Gradient
+                let stressRatio = Math.min(exp1State.weight / maxCapacity, 1);
+                let grad = ctx.createLinearGradient(startX, baseY, endX, baseY);
+                grad.addColorStop(0, wood.color);
+                grad.addColorStop(0.5, stressRatio > 0.7 ? `rgb(${255 * stressRatio}, ${100 * (1 - stressRatio)}, 50)` : wood.color);
+                grad.addColorStop(1, wood.color);
+
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = wood.darkColor;
+                ctx.stroke();
+
+                // Grain texture lines
+                ctx.strokeStyle = wood.darkColor;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.4;
+                if (exp1State.grain === 'h') {
+                    for (let i = 1; i <= 3; i++) {
+                        let offset = (beamH / 4) * i;
+                        ctx.beginPath();
+                        ctx.moveTo(startX, baseY + offset);
+                        ctx.quadraticCurveTo(midX, baseY + offset + flexAmount * 2, endX, baseY + offset);
+                        ctx.stroke();
+                    }
+                } else {
+                    for (let x = startX + 15; x < endX; x += 15) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, baseY);
+                        ctx.lineTo(x, baseY + beamH);
+                        ctx.stroke();
+                    }
+                }
+                ctx.globalAlpha = 1.0;
+
+                // Anvil & Load
+                if (exp1State.weight > 0) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(midX - 20, baseY + flexAmount - 30, 40, 30);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 12px Cairo';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(exp1State.weight + ' kg', midX, baseY + flexAmount - 10);
+                }
+
+            } else {
+                // Broken Beam Drawing
+                ctx.fillStyle = wood.color;
+                ctx.strokeStyle = wood.darkColor;
+
+                // Left Half
+                ctx.beginPath();
+                ctx.moveTo(startX, baseY);
+                ctx.lineTo(midX - 10, baseY + flexAmount);
+                ctx.lineTo(midX - 25, baseY + beamH + flexAmount);
+                ctx.lineTo(startX, baseY + beamH);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // Right Half
+                ctx.beginPath();
+                ctx.moveTo(endX, baseY);
+                ctx.lineTo(midX + 10, baseY + flexAmount);
+                ctx.lineTo(midX + 25, baseY + beamH + flexAmount);
+                ctx.lineTo(endX, baseY + beamH);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            }
+
+            // Update Status and Explanations
+            const statusEl = document.getElementById('exp1-status');
+            const expEl = document.getElementById('exp1-explanation');
+
+            if (exp1State.isBroken) {
+                statusEl.innerHTML = `⚠️ انكسر الخشب! (أقصى حمل: ${Math.round(maxCapacity)} كجم)`;
+                statusEl.className = "absolute top-6 right-6 bg-red-950 border border-red-500 px-4 py-2 rounded-lg font-bold text-sm text-red-300 animate-pulse";
+            } else {
+                statusEl.innerHTML = `الحالة: جهد ${Math.round((exp1State.weight / maxCapacity) * 100)}% من طاقة التحمل`;
+                statusEl.className = "absolute top-6 right-6 bg-slate-900/90 border border-slate-700 px-4 py-2 rounded-lg font-bold text-sm text-slate-200";
+            }
+
+            let expText = `أنت تختبر خشب <strong>${wood.name}</strong> عند رطوبة <strong>${exp1State.moisture}%</strong>. `;
+            if (exp1State.grain === 'h') {
+                expText += `بما أن الألياف <strong>موازية لاتجاه الحمل (طولية)</strong>، فإن روابط السليلوز تعمل كحزمة كابلات مشدودة متماسكة، مما يسمح بتحمل وزن حتى <strong>${Math.round(maxCapacity)} كجم</strong>.`;
+            } else {
+                expText += `بما أن الألياف <strong>عمودية (عرضية)</strong>، فإن الوزن يضغط على غراء اللجنين الضعيف الفاصل بين الألياف بدلاً من الألياف نفسها، مما يقلل قوة التحمل بنسبة تزيد عن 75% لتنكسر عند <strong>${Math.round(maxCapacity)} كجم</strong> فقط!`;
+            }
+            expEl.innerHTML = expText;
+        }
+
+        function updateExp2() {
+            exp2State.cut = document.getElementById('exp2-cut').value;
+            exp2State.rh = parseInt(document.getElementById('exp2-rh').value);
+            document.getElementById('exp2-rh-val').innerText = exp2State.rh + '%';
+
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const midX = canvas.width / 2;
+            const midY = canvas.height / 2;
+
+            // Equilibrium moisture content approximation EMC
+            const deltaRH = exp2State.rh - 50; // 50% is standard dry state
+            const bendFactor = (exp2State.cut === 'plain' ? 0.8 : 0.15) * deltaRH;
+
+            ctx.save();
+            ctx.translate(midX, midY);
+
+            // Draw Wood Board Cross-Section
+            const w = 320, h = 40;
+            ctx.beginPath();
+            
+            // Simulating Cupping (تعدس) using quadratic curves
+            ctx.moveTo(-w/2, -h/2);
+            ctx.quadraticCurveTo(0, -h/2 - bendFactor, w/2, -h/2);
+            ctx.lineTo(w/2, h/2);
+            ctx.quadraticCurveTo(0, h/2 - bendFactor, -w/2, h/2);
+            ctx.closePath();
+
+            ctx.fillStyle = "#D2B48C";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#8B4513";
+            ctx.stroke();
+
+            // Draw Annual Growth Rings (حلقات النمو)
+            ctx.strokeStyle = "#A0522D";
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.5;
+
+            if (exp2State.cut === 'plain') {
+                // Curved rings facing tree center
+                for (let r = 80; r <= 160; r += 20) {
+                    ctx.beginPath();
+                    ctx.arc(0, 100 + bendFactor * 0.5, r, Math.PI * 1.25, Math.PI * 1.75);
+                    ctx.stroke();
+                }
+            } else {
+                // Straight vertical rings (Quarter sawn)
+                for (let x = -w/2 + 20; x < w/2; x += 25) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, -h/2);
+                    ctx.lineTo(x, h/2);
+                    ctx.stroke();
+                }
+            }
+            ctx.restore();
+            ctx.globalAlpha = 1.0;
+
+            // Explanatory Labels on Canvas
+            ctx.fillStyle = "#94a3b8";
+            ctx.font = "bold 14px Cairo";
+            ctx.textAlign = "center";
+            if (deltaRH > 0) {
+                ctx.fillText(`ارتفاع الرطوبة (${exp2State.rh}%): الخشب يمتص الماء ويتمدد مماسياً (تحدب Board Cupping)`, midX, 40);
+            } else if (deltaRH < 0) {
+                ctx.fillText(`جفاف شديد (${exp2State.rh}%): الخشب يفقد رطوبته وينكمش وينحني للداخل`, midX, 40);
+            } else {
+                ctx.fillText(`رطوبة مثالية (50%): اللوح مسطح ومستقر تماماً`, midX, 40);
+            }
+
+            const expEl = document.getElementById('exp2-explanation');
+            if (exp2State.cut === 'plain') {
+                expEl.innerHTML = `في <strong>القص المماسي (Plain Sawn)</strong>، تنحني حلقات النمو بشكل قوسي. تسمى هذه الظاهرة <strong>التعدس (Cupping)</strong>، لأن الجانب الأقرب لمركز الشجرة ينكمش بنسبة أقل من الجانب الخارجي. هذا النوع رخيص الثمن ولكنه يعاني من تشوهات كبيرة في البيئات المتغيرة الرطوبة.`;
+            } else {
+                expEl.innerHTML = `في <strong>القص الشعاعي (Quarter Sawn)</strong>، تكون حلقات النمو عمودية تماماً على سطح اللوح (90 درجة). نتيجة لذلك، يكون الانكماش متساوياً على السطحين ولا يحدث أي تحدب أو التواء، مما يجعله الخيار الأول للأرضيات الفاخرة والآلات الموسيقية.`;
+            }
+        }
+
+        function updateExp3() {
+            const jointKey = document.getElementById('exp3-joint').value;
+            const glueKey = document.getElementById('exp3-glue').value;
+            const joint = joineryData[jointKey];
+            
+            let glueMult = glueKey === 'pva' ? joint.glueFactor : (glueKey === 'epoxy' ? joint.glueFactor * 1.4 : 0.2);
+            let maxCapacity = Math.round(joint.baseMax * glueMult);
+
+            document.getElementById('exp3-breakdown').innerText = `قوة التحمل القصوى: ${maxCapacity} كجم`;
+            document.getElementById('exp3-explanation').innerHTML = `<strong>${joint.name}:</strong> ${joint.desc}`;
+
+            drawExp3Canvas(0, false);
+        }
+
+        function drawExp3Canvas(currentLoad, isBroken) {
+            const canvas = document.getElementById('canvas3');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const jointKey = document.getElementById('exp3-joint').value;
+            const midX = canvas.width / 2;
+            const midY = canvas.height / 2;
+
+            // Draw Two Wooden Blocks being pulled apart
+            let offset = isBroken ? 40 : (currentLoad / 30);
+
+            // Left Block (Fixed)
+            ctx.fillStyle = "#8B4513";
+            ctx.fillRect(midX - 220, midY - 40, 180, 80);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 14px Cairo";
+            ctx.fillText("قطعة خشبية A (مثبتة)", midX - 200, midY + 70);
+
+            // Right Block (Pulled)
+            ctx.fillStyle = "#A0522D";
+            ctx.fillRect(midX + offset, midY - 40, 180, 80);
+            ctx.fillText("قطعة خشبية B (مشدودة)", midX + offset + 10, midY + 70);
+
+            // Draw Joint Mechanism Overlay
+            ctx.strokeStyle = "#f59e0b";
+            ctx.lineWidth = 4;
+
+            if (jointKey === 'mortise') {
+                // Tenon tongue
+                ctx.fillStyle = "#D2B48C";
+                ctx.fillRect(midX - 40 + offset, midY - 20, 40, 40);
+            } else if (jointKey === 'dowel') {
+                ctx.fillStyle = "#EED9B3";
+                ctx.fillRect(midX - 30 + offset/2, midY - 25, 60, 12);
+                ctx.fillRect(midX - 30 + offset/2, midY + 13, 60, 12);
+            } else if (jointKey === 'pocket') {
+                ctx.strokeStyle = "#94a3b8";
+                ctx.beginPath();
+                ctx.moveTo(midX + offset + 40, midY - 30);
+                ctx.lineTo(midX - 20, midY);
+                ctx.stroke();
+            }
+
+            // Tension Arrows
+            if (currentLoad > 0 && !isBroken) {
+                ctx.strokeStyle = "#ef4444";
+                ctx.lineWidth = 4;
+                // Red tension vectors
+                ctx.beginPath();
+                ctx.moveTo(midX + 200, midY); ctx.lineTo(midX + 250, midY);
+                ctx.lineTo(midX + 240, midY - 10);
+                ctx.stroke();
+            }
+        }
+
+        function startTensileTest() {
+            if (exp3State.isTesting) return;
+            exp3State.isTesting = true;
+            
+            const jointKey = document.getElementById('exp3-joint').value;
+            const glueKey = document.getElementById('exp3-glue').value;
+            const joint = joineryData[jointKey];
+            let glueMult = glueKey === 'pva' ? joint.glueFactor : (glueKey === 'epoxy' ? joint.glueFactor * 1.4 : 0.2);
+            let maxCapacity = Math.round(joint.baseMax * glueMult);
+
+            let load = 0;
+            let btn = document.getElementById('exp3-test-btn');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            let timer = setInterval(() => {
+                load += Math.round(maxCapacity / 25);
+                playCreakSound();
+                
+                if (load >= maxCapacity) {
+                    clearInterval(timer);
+                    playBreakSound();
+                    drawExp3Canvas(load, true);
+                    exp3State.isTesting = false;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                    document.getElementById('exp3-breakdown').innerText = `💥 انكسرت الوصلة عند جهد: ${load} كجم!`;
+                } else {
+                    drawExp3Canvas(load, false);
+                    document.getElementById('exp3-breakdown').innerText = `جاري تطبيق الشد: ${load} كجم...`;
+                }
+            }, 100);
+        }
+
+        window.onload = function() {
+            updateExp1();
+        };
+    </script>
+</body>
+</html>
