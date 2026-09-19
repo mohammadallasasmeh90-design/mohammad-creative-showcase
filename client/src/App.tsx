@@ -13,7 +13,7 @@ import StoryPage from "./pages/StoryPage";
 function Router() {
   return (
     <WouterRouter
-      base={import.meta.env.BASE_URL.replace(/\/$/, "")}
+      base={import.meta.env.BASE_URL === "/" ? "" : ""}
       hook={import.meta.env.BASE_URL === "/" ? undefined : useHashLocation}
     >
       <Switch>
