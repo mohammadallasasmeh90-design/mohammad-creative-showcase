@@ -11,6 +11,7 @@ import MediaPage from "./pages/MediaPage";
 import StoryPage from "./pages/StoryPage";
 
 function Router() {
+  if (import.meta.env.BASE_URL !== "/") return <Home />;
   return (
     <WouterRouter
       base={import.meta.env.BASE_URL === "/" ? "" : ""}
