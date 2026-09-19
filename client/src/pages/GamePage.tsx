@@ -3,10 +3,10 @@ import { ArrowRight, ExternalLink, Gamepad2, Home, Maximize2 } from "lucide-reac
 import { Link, useRoute } from "wouter";
 
 const games: Record<string, { title: string; subtitle: string; src: string; drive: string }> = {
-  "letters-adventure": { title: "مغامرة الحروف", subtitle: "تعلم ممتع وتفاعلي للأطفال", src: "/games/letters-adventure.html", drive: "https://drive.google.com/file/d/1Jyjhiu0YIVp3a66NFbSS2Nbd6ppsSI-z/view" },
-  "neon-bomberman": { title: "Neon Bomberman 2088", subtitle: "لعبة الأكشن المستقبلية", src: "/games/neon-bomberman.html", drive: "https://drive.google.com/file/d/1S7PAvxbvQvCLYZ6Gy-rtMFSNnh5z2IIl/view" },
-  "wood-science": { title: "مختبر علوم النجارة", subtitle: "تجارب فيزيائية تفاعلية", src: "/games/wood-science.html", drive: "https://drive.google.com/file/d/1jjxS9t4hLx0gGpnz2y3y9MLVA8PmySH6/view" },
-  "gravity-lab": { title: "مختبر الجاذبية", subtitle: "محاكاة السقوط الحر والكواكب", src: "/games/gravity-lab.html", drive: "https://drive.google.com/file/d/1tAnG7hz9K5VS-jTslHK2S6FA9kIl-q8o/view" },
+  "letters-adventure": { title: "مغامرة الحروف", subtitle: "تعلم ممتع وتفاعلي للأطفال", src: import.meta.env.BASE_URL + "games/letters-adventure.html", drive: "https://drive.google.com/file/d/1Jyjhiu0YIVp3a66NFbSS2Nbd6ppsSI-z/view" },
+  "neon-bomberman": { title: "Neon Bomberman 2088", subtitle: "لعبة الأكشن المستقبلية", src: import.meta.env.BASE_URL + "games/neon-bomberman.html", drive: "https://drive.google.com/file/d/1S7PAvxbvQvCLYZ6Gy-rtMFSNnh5z2IIl/view" },
+  "wood-science": { title: "مختبر علوم النجارة", subtitle: "تجارب فيزيائية تفاعلية", src: import.meta.env.BASE_URL + "games/wood-science.html", drive: "https://drive.google.com/file/d/1jjxS9t4hLx0gGpnz2y3y9MLVA8PmySH6/view" },
+  "gravity-lab": { title: "مختبر الجاذبية", subtitle: "محاكاة السقوط الحر والكواكب", src: import.meta.env.BASE_URL + "games/gravity-lab.html", drive: "https://drive.google.com/file/d/1tAnG7hz9K5VS-jTslHK2S6FA9kIl-q8o/view" },
 };
 
 export default function GamePage() {

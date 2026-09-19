@@ -2,7 +2,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink, Home, Maximize2 } 
 import { useState } from "react";
 import { Link } from "wouter";
 
-const pages = Array.from({ length: 10 }, (_, index) => `/story/page-${String(index + 1).padStart(2, "0")}.jpg`);
+const pages = Array.from({ length: 10 }, (_, index) => `${import.meta.env.BASE_URL}story/page-${String(index + 1).padStart(2, "0")}.jpg`);
 
 export default function StoryPage() {
   const [page, setPage] = useState(0);

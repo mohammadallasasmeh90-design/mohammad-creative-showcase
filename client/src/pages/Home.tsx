@@ -51,8 +51,8 @@ const projects: Project[] = [
     description: "فكرة منتج ذكي تبدأ من سؤال بسيط: كيف نجعل الأشياء اليومية أكثر وعيًا وسلاسة؟",
     label: "تصميم + فيديو",
     accent: "coral",
-    image: "/manus-storage/smart-cabinet_d7433183.png",
-    video: "/manus-storage/smart-cabinet_fb4e38f1.mp4",
+    image: import.meta.env.BASE_URL + "media/smart-cabinet.png",
+    video: import.meta.env.BASE_URL + "media/smart-cabinet.mp4",
     sourceUrl: "https://drive.google.com/file/d/1huhd6D01jccDNvBuX1NOMLvqAL5GguE5/view",
     sourceLabel: "فتح فيديو الخزانة الذكية في Drive",
     icon: Zap,
@@ -64,7 +64,7 @@ const projects: Project[] = [
     description: "تجربة تفاعلية تقرّب مفهومًا فيزيائيًا معقدًا إلى عين الطالب ويده، لا إلى ذاكرته فقط.",
     label: "تجربة علمية",
     accent: "blue",
-    video: "/manus-storage/physics-explainer_12d8104e.mp4",
+    video: import.meta.env.BASE_URL + "media/physics-explainer.mp4",
     sourceUrl: "https://drive.google.com/file/d/1tAnG7hz9K5VS-jTslHK2S6FA9kIl-q8o/view",
     sourceLabel: "فتح تجربة الجاذبية التفاعلية",
     icon: Atom,
@@ -76,7 +76,7 @@ const projects: Project[] = [
     description: "سرد بصري لدورة الحياة، يحوّل المعلومة إلى رحلة قصيرة بإيقاع واضح وشخصية محبوبة.",
     label: "فيديو تعليمي",
     accent: "gold",
-    video: "/manus-storage/bee-lifecycle_b5a655bd.mp4",
+    video: import.meta.env.BASE_URL + "media/bee-lifecycle.mp4",
     sourceUrl: "https://drive.google.com/file/d/1aJsvgePBQN-DgC7yZ6iD4yw_TQWYqKbN/view",
     sourceLabel: "فتح فيديو دورة حياة النحلة",
     icon: Film,
@@ -88,7 +88,7 @@ const projects: Project[] = [
     description: "لعبة خفيفة تجعل التفكير نشاطًا ممتعًا، وتفتح مساحة للتجربة والمحاولة دون خوف من الخطأ.",
     label: "لعبة تفاعلية",
     accent: "violet",
-    image: "/manus-storage/explainer-character_a5fee8aa.jpg",
+    image: import.meta.env.BASE_URL + "media/explainer-character.jpg",
     sourceUrl: "https://drive.google.com/file/d/1aiBSigTjF8OC-y9ho_WC66oEo4k8as78/view",
     sourceLabel: "تشغيل لعبة الذكاء",
     icon: Brain,
@@ -100,7 +100,7 @@ const projects: Project[] = [
     description: "تمارين تركيب وصورة ولون تشكل أرشيفًا بصريًا يثبت أن كل فكرة عظيمة تبدأ بمحاولة.",
     label: "تمرين إبداعي",
     accent: "lime",
-    image: "/manus-storage/exercise-one_b66de397.jpg",
+    image: import.meta.env.BASE_URL + "media/exercise-one.jpg",
     sourceUrl: "https://drive.google.com/file/d/1vU-YND9f7fDDzEju1TVnZ98v-5VVVWAz/view",
     sourceLabel: "فتح الصورة الأصلية",
     icon: Clapperboard,
@@ -112,7 +112,7 @@ const projects: Project[] = [
     description: "تجارب صوتية تمزج الحوار والمؤثرات والبيئة لتضيف طبقة شعورية كاملة إلى المحتوى.",
     label: "تجربة صوتية",
     accent: "pink",
-    image: "/manus-storage/exercise-two_e014028f.jpg",
+    image: import.meta.env.BASE_URL + "media/exercise-two.jpg",
     sourceUrl: "https://drive.google.com/file/d/1oJKhwo-HJHG0zDjuniHERAdsNxfvTEgo/view",
     sourceLabel: "فتح الصورة الأصلية",
     icon: BookOpen,
@@ -224,7 +224,7 @@ function Home() {
             <div className="hero-card hero-card--main">
               <div className="hero-card__topline"><span>01 / 06</span><span>فكرة تتحرك</span></div>
               <div className="hero-card__image-wrap">
-                <img src="/manus-storage/smart-cabinet_d7433183.png" alt="الخزانة الذكية" />
+                <img src={import.meta.env.BASE_URL + "media/smart-cabinet.png"} alt="الخزانة الذكية" />
                 <div className="image-overlay" />
                 <div className="hero-card__caption"><small>مشروع مختار</small><strong>الخزانة الذكية</strong></div>
               </div>
@@ -250,8 +250,8 @@ function Home() {
 
       <section className="profile-section" id="profile">
         <div className="container profile-grid">
-          <div className="profile-portrait-wrap"><div className="profile-orbit" /><img className="profile-portrait" src="/manus-storage/mohammad-portrait_1f220f22.png" alt="محمد عبدالله اللصاصمه" /><span className="profile-badge">متاح للتعاون</span></div>
-          <div className="profile-copy"><SectionKicker>من يقف خلف التجربة</SectionKicker><h2>محمد عبدالله<br /><em>اللصاصمه.</em></h2><p className="profile-lead">مهندس كهرباء واتصالات أردني، بخبرة عملية في الألياف الضوئية، شبكات FTTH، صيانة الهواتف، وأنظمة CCTV — وبشغف واضح لصناعة محتوى وتجارب رقمية تجعل المعرفة أقرب وأكثر إنسانية.</p><div className="profile-contact"><a href="tel:+962790141918"><Phone size={15} /> +962 790 141 918</a><a href="mailto:Allasasmah.mohammad@yahoo.com"><Mail size={15} /> Allasasmah.mohammad@yahoo.com</a><span><MapPin size={15} /> الكرك، الأردن</span></div><div className="profile-meta"><span>أردني</span><span>العربية · English</span><span>تدريب صيانة أجهزة خلوية · 2024</span></div><a className="profile-cv" href="/manus-storage/profile_078c6478.pdf" target="_blank" rel="noreferrer"><ExternalLink size={14} /> عرض السيرة الذاتية الكاملة</a></div>
+          <div className="profile-portrait-wrap"><div className="profile-orbit" /><img className="profile-portrait" src={import.meta.env.BASE_URL + "media/mohammad-portrait.png"} alt="محمد عبدالله اللصاصمه" /><span className="profile-badge">متاح للتعاون</span></div>
+          <div className="profile-copy"><SectionKicker>من يقف خلف التجربة</SectionKicker><h2>محمد عبدالله<br /><em>اللصاصمه.</em></h2><p className="profile-lead">مهندس كهرباء واتصالات أردني، بخبرة عملية في الألياف الضوئية، شبكات FTTH، صيانة الهواتف، وأنظمة CCTV — وبشغف واضح لصناعة محتوى وتجارب رقمية تجعل المعرفة أقرب وأكثر إنسانية.</p><div className="profile-contact"><a href="tel:+962790141918"><Phone size={15} /> +962 790 141 918</a><a href="mailto:Allasasmah.mohammad@yahoo.com"><Mail size={15} /> Allasasmah.mohammad@yahoo.com</a><span><MapPin size={15} /> الكرك، الأردن</span></div><div className="profile-meta"><span>أردني</span><span>العربية · English</span><span>تدريب صيانة أجهزة خلوية · 2024</span></div><a className="profile-cv" href={import.meta.env.BASE_URL + "profile/profile.pdf"} target="_blank" rel="noreferrer"><ExternalLink size={14} /> عرض السيرة الذاتية الكاملة</a></div>
           <div className="profile-facts"><div className="profile-fact"><GraduationCap size={20} /><div><small>التخصص</small><strong>هندسة كهرباء واتصالات</strong><span>جامعة مؤتة · 2009–2015</span></div></div><div className="profile-fact"><Zap size={20} /><div><small>الخبرة</small><strong>ألياف ضوئية · FTTH · شبكات</strong><span>إشراف ميداني وتواصل مع العملاء</span></div></div><div className="profile-fact"><Sparkles size={20} /><div><small>نقاط القوة</small><strong>تواصل · تفاوض · قيادة فرق</strong><span>Excel و Word والعمل تحت الضغط</span></div></div></div>
           <div className="experience-row"><div className="experience-heading"><SectionKicker light>رحلة الخبرة</SectionKicker><span>2015 — الآن</span></div><div className="experience-list"><div><strong>مشرف ألياف ضوئية</strong><span>Joint Venture / Nimer Al-Lawzi & Partners · 2020–2021</span></div><div><strong>مهندس اتصالات ومبيعات FTTH</strong><span>STRAND Telecommunication Technology · 2017–2018</span></div><div><strong>مشرف ميداني</strong><span>MASAR United Contracting Company · 2015–2017</span></div><div><strong>فني صيانة CCTV وشبكات</strong><span>Siran Contracting Company · 2015–2017</span></div></div></div>
         </div>
@@ -287,7 +287,7 @@ function Home() {
       <section className="resources-section" id="resources">
         <div className="container">
           <div className="section-heading resources-heading"><div><SectionKicker>الأرشيف الكامل</SectionKicker><h2>كل الروابط،<br /><em>في مكان واحد.</em></h2></div><div className="section-heading__side"><p>كل الألعاب والوسائط والقصة والموقع تعمل من داخل الموقع مباشرة، مع الاحتفاظ برابط المصدر الأصلي لمن يريد الرجوع إليه.</p><span className="project-count">30 <small>روابط مباشرة</small></span></div></div>
-          <div className="resource-grid">{resources.map((resource) => { const Icon = resource.icon; const href = resource.path ?? resource.url; return <a className={`resource-item ${resource.path ? "resource-item--playable" : ""}`} key={resource.url + resource.title} href={href} target={resource.path ? undefined : "_blank"} rel={resource.path ? undefined : "noreferrer"}><span className="resource-icon"><Icon size={18} /></span><span className="resource-copy"><small>{resource.path ? "تشغيل داخل الموقع" : resource.kind}</small><strong>{resource.title}</strong></span>{resource.path ? <Play className="resource-arrow" size={16} fill="currentColor" /> : <ExternalLink className="resource-arrow" size={16} />}</a>; })}</div>
+          <div className="resource-grid">{resources.map((resource) => { const Icon = resource.icon; const href = resource.path ? (resource.path.startsWith("/watch") || resource.path === "/story" ? `${import.meta.env.BASE_URL}#${resource.path}` : `${import.meta.env.BASE_URL.replace(/\/$/, "")}${resource.path}`) : resource.url; return <a className={`resource-item ${resource.path ? "resource-item--playable" : ""}`} key={resource.url + resource.title} href={href} target={resource.path ? undefined : "_blank"} rel={resource.path ? undefined : "noreferrer"}><span className="resource-icon"><Icon size={18} /></span><span className="resource-copy"><small>{resource.path ? "تشغيل داخل الموقع" : resource.kind}</small><strong>{resource.title}</strong></span>{resource.path ? <Play className="resource-arrow" size={16} fill="currentColor" /> : <ExternalLink className="resource-arrow" size={16} />}</a>; })}</div>
           <a className="drive-folder-link" href="https://drive.google.com/drive/folders/1lsOL5MViy3kMO7fUdm2M9hlZjMFAmn8i" target="_blank" rel="noreferrer"><ExternalLink size={15} /> فتح مجلد Drive الكامل</a>
         </div>
       </section>
