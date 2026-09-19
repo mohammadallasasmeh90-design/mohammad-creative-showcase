@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Router as WouterRouter, Switch } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
@@ -11,7 +12,10 @@ import StoryPage from "./pages/StoryPage";
 
 function Router() {
   return (
-    <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+    <WouterRouter
+      base={import.meta.env.BASE_URL.replace(/\/$/, "")}
+      hook={import.meta.env.BASE_URL === "/" ? undefined : useHashLocation}
+    >
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/play/:slug" component={GamePage} />
